@@ -37,7 +37,7 @@ export default class audio {
         else if (type === 'file') {
             this._source = this._context.createBufferSource(); 
             var request = new XMLHttpRequest();
-            request.open('GET', '/musics/rock/rock.00004.au', true);
+            request.open('GET', '/musics/TakeFive.mp3', true);
             request.responseType = 'arraybuffer'; 
             request.onload = () => {
                 this._context.decodeAudioData(request.response, (buffer) => {
@@ -102,4 +102,6 @@ export default class audio {
     predict() {
         console.log(this._dataArray);
     }
+
+    
 }
