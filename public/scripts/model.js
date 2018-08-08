@@ -1,6 +1,4 @@
-import * as tf from '@tensorflow/tfjs';
-
-const LEARNING_RATE = 0.001;
+//import * as tf from '@tensorflow/tfjs';
 
 const model = tf.sequential();
 
@@ -71,10 +69,21 @@ model.add(tf.layers.dense({
     activation: 'softmax'
 }));
 
-const optimizer = tf.train.rmsprop(LEARNING_RATE);
+const LEARNING_RATE = 0.001;
 
 model.compile({
-    optimizer: optimizer,
+    optimizer: tf.train.rmsprop(LEARNING_RATE),
     loss: 'categoricalCrossentropy',
     metrics: ['accuracy'],
 });
+
+export  async function predict(dataArray, PRED_BATCH_SIZE) {
+    tf.tidy(() => {
+        const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
+        const result = model.predict(data);
+        result.print();
+    });
+    await tf.nextFrame();
+} 
+
+

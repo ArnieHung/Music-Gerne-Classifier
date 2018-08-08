@@ -1,3 +1,6 @@
+//import { ModelLoggingVerbosity } from "@tensorflow/tfjs-layers/dist/engine/training";
+import * as model from './model.js';
+
 export default class audio {
     constructor(type) {
         window.AudioContext = window.AudioContext||window.webkitAudioContext||window.mozAudioContext;
@@ -5,10 +8,19 @@ export default class audio {
         this.processor = null;
         this.FREQ_NUM =  128;
         this.PROCESS_NUM = 1024;
+        this.PRED_BATCH_SIZE = 1;
+        this.TRAIN_BATCH_SIZE = 10;
+
+        this._MAX_BATCH_SIZE 
+            = Math.max( this.PRED_BATCH_SIZE , this.TRAIN_BATCH_SIZE);
+        this._MODE = type;
+
 
         this._context = new AudioContext();
         this._samplesCnt = 0;
-        this._dataArray  = new Uint8Array(this.FREQ_NUM * this.FREQ_NUM);
+
+
+        //this._predArray = new Uint8Array(this.PRED_BATCH_SIZE * this.FREQ_NUM * this.FREQ_NUM);
 
         this._canvas = document.getElementById("visualizer");
         this._ctx = this._canvas.getContext("2d");
@@ -19,6 +31,9 @@ export default class audio {
         this._ctxTmp = this._canvasTmp.getContext("2d");
 
         if(type === 'record') {
+            this._dataArray  
+                = new Uint8Array(this.PRED_BATCH_SIZE * this.FREQ_NUM * this.FREQ_NUM);
+            
             if (navigator.mediaDevices.getUserMedia) {
                 console.log('getUserMedia supported.');
                 const constraints = {audio: true}
@@ -35,6 +50,9 @@ export default class audio {
              }
         }
         else if (type === 'file') {
+            this._dataArray  
+                = new Uint8Array(this.TRAIN_BATCH_SIZE * this.FREQ_NUM * this.FREQ_NUM);
+
             this._source = this._context.createBufferSource(); 
             var request = new XMLHttpRequest();
             request.open('GET', '/musics/TakeFive.mp3', true);
@@ -65,13 +83,26 @@ export default class audio {
         this.processor.onaudioprocess = () => {
             let dx = new Uint8Array(this.analyser.frequencyBinCount);
             this.analyser.getByteFrequencyData(dx);
-           
+
             this._draw(dx); 
-            
-            if((++this._samplesCnt) == 128 ) {
-                this.predict();
-                this._samplesCnt = 0;
-            }      
+
+            this._samplesCnt++;
+            const PICS_CNT = this._samplesCnt / 128;
+
+            if(this._MODE === 'record') {
+                if(PICS_CNT == this.PRED_BATCH_SIZE) {
+                    this._samplesCnt = 0;
+                    this.predict();
+                }
+            }
+            else if(this._MODE === 'file'){
+                if(PICS_CNT == this.TRAIN_BATCH_SIZE) {
+                    this._samplesCnt = 0;
+                    this.train();
+                }
+            }
+
+
         }
 
         this._source.connect(this.analyser);
@@ -99,9 +130,14 @@ export default class audio {
         this._context.close();
     }
 
-    predict() {
+    async predict() {
         console.log(this._dataArray);
+        model.predict(this._dataArray, this.PRED_BATCH_SIZE);
     }
 
-    
+    train() {
+        console.log(this._dataArray);
+        //model.train(this._dataArray);
+    }
+
 }
