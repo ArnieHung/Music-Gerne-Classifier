@@ -1,4 +1,10 @@
-//import * as tf from '@tensorflow/tfjs';
+
+import {
+    GERNES, GERNES_NUM, MUSIC_NUM_PER_GERNE,
+    FREQ_NUM, PROCESS_NUM,
+    PRED_BATCH_SIZE, TRAIN_BATCH_SIZE,
+} from './config.js';
+
 
 const model = tf.sequential();
 
@@ -28,6 +34,7 @@ model.add(tf.layers.maxPooling2d({
     poolSize: [2, 2],
     strides: [2, 2]
 }));
+
 
 model.add(tf.layers.conv2d({
     kernelSize: 2,
@@ -77,7 +84,7 @@ model.compile({
     metrics: ['accuracy'],
 });
 
-export  async function predict(dataArray, PRED_BATCH_SIZE) {
+export  async function predict(dataArray) {
     tf.tidy(() => {
         const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
         const result = model.predict(data);
@@ -86,4 +93,26 @@ export  async function predict(dataArray, PRED_BATCH_SIZE) {
     await tf.nextFrame();
 } 
 
+export async function train(dataArray, labelsArray) {
 
+    const data = tf.tensor4d(dataArray, [TRAIN_BATCH_SIZE, 128, 128, 1]);;
+    const labels = tf.oneHot(labelsArray, GERNES_NUM);
+    //const labels = tf.oneHot(labelsArray);
+    data.print();
+    labels.print();
+
+    const history = await model.fit(
+        data, labels,
+        {batchSize: TRAIN_BATCH_SIZE, epochs: 2}
+    );
+    console.log("examples trained!");
+    const loss = history.history.loss[0];
+    const accuracy = history.history.acc[0];
+
+    console.log(`loss: ${loss}`, `accuracy: ${accuracy}`);
+
+    data.dispose();
+    labels.dispose();
+
+    await tf.nextFrame();
+}

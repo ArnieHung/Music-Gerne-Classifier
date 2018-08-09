@@ -12,7 +12,7 @@ recordBtn.onclick = () => {
 }
 
 trainBtn.onclick = () => {
-    Audio = new audio('file');
+    Audio = new audio('train');
 }
 
 stopBtn.onclick = () => {
