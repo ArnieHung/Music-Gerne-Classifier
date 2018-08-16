@@ -9,6 +9,9 @@ import {
 
 export default class audio {
     constructor(mode) {
+        
+        
+
         window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
         this.analyser = null;
         this.processor = null;
@@ -85,14 +88,15 @@ export default class audio {
 
     }
 
-    _setProcessor(mode, gerne=-1) {
+    _setProcessor(mode, gerne) {
         
         this.analyser = this._context.createAnalyser();
         this.analyser.fftSize = FREQ_NUM * 2;
 
         this.processor = this._context.createScriptProcessor(PROCESS_NUM, 1, 1);
         this.processor.connect(this._context.destination);
-        this.processor.onaudioprocess = () => {
+        this.processor.onaudioprocess =  () => {
+            console.log("recording...");
             let dx = new Uint8Array(this.analyser.frequencyBinCount);
             this.analyser.getByteFrequencyData(dx);
 
@@ -106,7 +110,14 @@ export default class audio {
             if (mode === 'record') {
                 if (picsCnt == PRED_BATCH_SIZE) {
                     this._exampleCnt = 0;
-                    this.predict();
+                    //this.predict();
+                    console.log("in processor");
+                    if(this.flag == 1){
+                        model.predict(this._dataArray);
+                        this.flag = 0;
+                    }
+                    
+                    console.log("out preocessor");
                 }
             }
             else if (mode === 'train') {
@@ -119,7 +130,7 @@ export default class audio {
                 }
             }
 
-
+            //await tf.nextFrame();
         }
 
         this._source.connect(this.analyser);

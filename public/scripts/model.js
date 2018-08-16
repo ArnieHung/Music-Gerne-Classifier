@@ -84,13 +84,35 @@ model.compile({
     metrics: ['accuracy'],
 });
 
-export  async function predict(dataArray) {
+export async function predict(dataArray) {
     tf.tidy(() => {
         const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
-        const result = model.predict(data);
-        result.print();
+        model.predict(data);
+        //result.print();
     });
-    await tf.nextFrame();
+    // const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
+    // const predictPromise = async() => {
+    //     return model.predict(data)
+    // };
+    // console.log("in predict");
+    // const prediction = await predictPromise();
+    // console.log("out predict");
+
+    // data.dispose();
+    // prediction.dispose();
+
+    const predictedClass = tf.tidy(() => {
+    
+        const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
+        const predictions = model.predict(activation);
+        return predictions.as1D().argMax();
+      });
+  
+      const classId = (await predictedClass.data())[0];
+      predictedClass.dispose();
+      conslog(classId);
+
+    
 } 
 
 export async function train(dataArray, labelsArray) {

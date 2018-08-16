@@ -19,4 +19,6 @@ stopBtn.onclick = () => {
     Audio.stop();
 }
 
+tf.setBackend("webgl");
+console.log("backend: ", tf.getBackend());
 
