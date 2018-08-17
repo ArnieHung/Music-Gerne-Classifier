@@ -1,4 +1,8 @@
+//tf.setBackend("webgl");
+
+
 import audio from "./audio.js";
+import * as tf from '@tensorflow/tfjs';
 
 
 const recordBtn = document.getElementById("Record");
@@ -19,6 +23,6 @@ stopBtn.onclick = () => {
     Audio.stop();
 }
 
-tf.setBackend("webgl");
 console.log("backend: ", tf.getBackend());
+
 

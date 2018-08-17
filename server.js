@@ -10,4 +10,6 @@ app.use(function(req, res, next) {
   
 app.use(express.static('public'));
 
-app.listen(3000);
+app.listen(3000, ()=>{
+  console.log("listeing pn port 3000");
+});

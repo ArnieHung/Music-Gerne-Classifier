@@ -1,4 +1,5 @@
 import * as model from './model.js';
+
 import {
     GERNES, GERNES_NUM, MUSIC_NUM_PER_GERNE,
     FREQ_NUM, PROCESS_NUM,
@@ -65,8 +66,8 @@ export default class audio {
 
                     var request = new XMLHttpRequest();
                    
-                    console.log(`/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}.${music_iter}.mp3`);
-                    request.open('GET', `/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}.${music_iter}.mp3`, true);
+                    console.log(`http://localhost:3000/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}_${music_iter}.mp3`);
+                    request.open('GET', `http://localhost:3000/musics/${GERNES[gerne_iter]}_${music_iter}.mp3`, true);
                     request.responseType = 'arraybuffer';
                 
                     request.onload = () => {
@@ -112,10 +113,7 @@ export default class audio {
                     this._exampleCnt = 0;
                     //this.predict();
                     console.log("in processor");
-                    if(this.flag == 1){
-                        model.predict(this._dataArray);
-                        this.flag = 0;
-                    }
+                    model.predict(this._dataArray);
                     
                     console.log("out preocessor");
                 }
@@ -124,7 +122,7 @@ export default class audio {
                 if (picsCnt == TRAIN_BATCH_SIZE) {
                     this._exampleCnt = 0;
                     if(this.flag) {
-                        this.train();
+                        model.train(this._dataArray, this._labelsArray);
                         this.flag = 0;
                     }
                 }
@@ -157,16 +155,4 @@ export default class audio {
     stop() {
         this._context.close();
     }
-
-    async predict() {
-        console.log(this._dataArray);
-        model.predict(this._dataArray);
-    }
-
-    async train() {
-        console.log('dataArray', this._dataArray);
-        console.log('labelsArray', this._labelsArray);
-        model.train(this._dataArray, this._labelsArray);
-    }
-
 }
