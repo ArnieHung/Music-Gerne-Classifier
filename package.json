@@ -12,5 +12,22 @@
   "dependencies": {
     "@tensorflow/tfjs": "^0.12.5",
     "express": "^4.16.3"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "music-gerne-classifer",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArnieHung/Music-Gerne-Classifier.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArnieHung/Music-Gerne-Classifier/issues"
+  },
+  "homepage": "https://github.com/ArnieHung/Music-Gerne-Classifier#readme",
+  "description": ""
 }
