@@ -66,8 +66,8 @@ export default class audio {
 
                     var request = new XMLHttpRequest();
                    
-                    console.log(`http://localhost:3000/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}_${music_iter}.mp3`);
-                    request.open('GET', `http://localhost:3000/musics/${GERNES[gerne_iter]}_${music_iter}.mp3`, true);
+                   // console.log(`http://localhost:3000/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}_${music_iter}.mp3`);
+                    request.open('GET', `http://localhost:3000/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}.${music_iter}.mp3`, true);
                     request.responseType = 'arraybuffer';
                 
                     request.onload = () => {
@@ -121,10 +121,9 @@ export default class audio {
             else if (mode === 'train') {
                 if (picsCnt == TRAIN_BATCH_SIZE) {
                     this._exampleCnt = 0;
-                    if(this.flag) {
+
                         model.train(this._dataArray, this._labelsArray);
-                        this.flag = 0;
-                    }
+
                 }
             }
 

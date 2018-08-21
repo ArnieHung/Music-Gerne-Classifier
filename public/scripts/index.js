@@ -1,9 +1,10 @@
-//tf.setBackend("webgl");
-
-
-import audio from "./audio.js";
 import * as tf from '@tensorflow/tfjs';
 
+import audio from "./audio.js";
+import {loadmodel} from "./model.js";
+
+
+//tf.setBackend("webgl");
 
 const recordBtn = document.getElementById("Record");
 const trainBtn = document.getElementById("Train");
@@ -22,6 +23,8 @@ trainBtn.onclick = () => {
 stopBtn.onclick = () => {
     Audio.stop();
 }
+
+loadmodel();
 
 console.log("backend: ", tf.getBackend());
 
