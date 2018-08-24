@@ -1,27 +1,38 @@
 import * as model from './model.js';
 
 import {
-    GERNES, GERNES_NUM, MUSIC_NUM_PER_GERNE,
+    GENRES, GENRES_NUM, MUSIC_NUM_PER_GENRE,
     FREQ_NUM, PROCESS_NUM,
     PRED_BATCH_SIZE, TRAIN_BATCH_SIZE,
 } from './config.js';
 
+import {songsArr} from './data.js';
+
 
 
 export default class audio {
-    constructor(mode) {
+    constructor(dataset, mode) {
         
-        
+        this.dataset = dataset;
+        this.mode = mode;
 
-        window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
-        this.analyser = null;
-        this.processor = null;
+        // data buffer array to store sound image, 
+        // converted to tensor later.
+        this._dataArray = new Uint8Array(FREQ_NUM * FREQ_NUM);
+    
+        // declare web audio nodes
+        this._context = new AudioContext();
+        this._streamSource = null;
+        this._bufferSource = null;
+        this._analyser = null;
+        this._processor = null;
+
         this._exampleCnt = 0;
 
-        this._MAX_BATCH_SIZE = Math.max(PRED_BATCH_SIZE, TRAIN_BATCH_SIZE);
+        // current genre
+        this._genre = null;
 
-        this._context = new AudioContext();
-
+        // canvas 
         this._canvas = document.getElementById("visualizer");
         this._ctx = this._canvas.getContext("2d");
 
@@ -30,108 +41,111 @@ export default class audio {
         this._canvasTmp.height = 200;
         this._ctxTmp = this._canvasTmp.getContext("2d");
 
-        this.flag = 1;
 
-        if (mode === 'record') {
-            this._dataArray
-                = new Uint8Array(PRED_BATCH_SIZE * FREQ_NUM * FREQ_NUM);
-            this._labelsArray
-                = new Uint8Array(PRED_BATCH_SIZE);
+        // build web audio graph
 
-            if (navigator.mediaDevices.getUserMedia) {
-                console.log('getUserMedia supported.');
-                const constraints = { audio: true }
-                let stream;
-                navigator.mediaDevices.getUserMedia(constraints)
-                    .then(
-                        (stream) => {
-                            this._source = this._context.createMediaStreamSource(stream);
-                            this._setProcessor(mode);
-                        })
-                    .catch(function (err) { console.log('The following gUM error occured: ' + err); })
-            } else {
-                console.log('getUserMedia not supported on your browser!');
-            }
-        }
-        else if (mode === 'train') {
-            this._dataArray
-                = new Uint8Array(TRAIN_BATCH_SIZE * FREQ_NUM * FREQ_NUM);
-            this._labelsArray
-                = new Uint8Array(TRAIN_BATCH_SIZE);
+        this._createAnalyzer();
 
-            this._source = this._context.createBufferSource();
+        this._createProcessor();
 
-            for (let gerne_iter = 0; gerne_iter < 1; gerne_iter++) {
-                for (let music_iter = 0; music_iter < MUSIC_NUM_PER_GERNE; music_iter++) {
-
-                    var request = new XMLHttpRequest();
-                   
-                   // console.log(`http://localhost:3000/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}_${music_iter}.mp3`);
-                    request.open('GET', `http://localhost:3000/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}.${music_iter}.mp3`, true);
-                    request.responseType = 'arraybuffer';
-                
-                    request.onload = () => {
-                        this._context.decodeAudioData(request.response, (buffer) => {
-                            this._source.buffer = buffer;
-                        }, null);
-                    }
-                    request.send();
-
-                    this._source.connect(this._context.destination);
-                    this._setProcessor(mode, gerne_iter);
-                    this._source.start(0);
-                }
-            }
-
-        } else {
-            console.log("mode not valid");
-        }
+        this._createSource()
+        .then(() => {this._connectNodes()})
+        .catch((err) => {console.log(err);});
 
     }
 
-    _setProcessor(mode, gerne) {
-        
-        this.analyser = this._context.createAnalyser();
-        this.analyser.fftSize = FREQ_NUM * 2;
+    async _createSource() {
+        if(this.mode === 'buffer') {
+            this._createBufferSource();
+        }
+        else if (this.mode === 'stream') {
+            return this._createStreamSource();
+        }
+    }
 
-        this.processor = this._context.createScriptProcessor(PROCESS_NUM, 1, 1);
-        this.processor.connect(this._context.destination);
-        this.processor.onaudioprocess =  () => {
-            console.log("recording...");
-            let dx = new Uint8Array(this.analyser.frequencyBinCount);
-            this.analyser.getByteFrequencyData(dx);
+
+
+    async _createStreamSource() {
+        if (navigator.mediaDevices.getUserMedia) {
+            console.log('getUserMedia supported.');
+            const constraints = { audio: true }
+            return (
+                navigator.mediaDevices.getUserMedia(constraints)
+                .then((stream) => {
+                    console.log('in');
+                    this._streamSource = this._context.createMediaStreamSource(stream);
+                
+                })
+                .catch(function (err) { console.log('The following gUM error occured: ' + err); })
+            );
+        } 
+        else {
+            console.log('getUserMedia not supported on your browser!');
+        }
+    }
+
+    _createBufferSource() {
+        this._bufferSource = this._context.createBufferSource();
+        this._getNewSong();
+
+        // when the song ended...
+        this._bufferSource.onended = () => {
+            console.log("song ended!!");  
+
+            // if there's no more song in  songsArr
+            if(songsArr.length == 0) {
+                console.log('no songs to add!!');
+                // terminate the audio
+                this._context.close();
+            }
+            else {
+                // disconnect the previous source
+                this._bufferSource.disconnect();
+                // create a new source 
+                this._createBufferSource();
+                // conect the new source to other audio nodes
+                this._bufferSource.connect(this._analyser);
+                this._bufferSource.connect(this._context.destination);
+                
+            }
+        }
+        //this._connectNodes();
+
+    }
+
+    _createAnalyzer() {
+        this._analyser = this._context.createAnalyser();
+        this._analyser.fftSize = FREQ_NUM * 2;
+    }
+
+
+
+    _createProcessor() {
+        this._processor = this._context.createScriptProcessor(PROCESS_NUM, 1, 1);
+        this._processor.onaudioprocess =  () => {
+            console.log('in processor');
+            let dx = new Uint8Array(this._analyser.frequencyBinCount);
+
+            this._analyser.getByteFrequencyData(dx);
 
             this._draw(dx);
 
-            this._labelsArray[this._exampleCnt] = gerne;
-
             this._exampleCnt++;
-            const picsCnt = this._exampleCnt / 128;
+            const picsCnt = this._exampleCnt / 128; 
 
-            if (mode === 'record') {
-                if (picsCnt == PRED_BATCH_SIZE) {
+            if(picsCnt === 1) {
+                if (this.mode === 'stream') {
                     this._exampleCnt = 0;
-                    //this.predict();
-                    console.log("in processor");
                     model.predict(this._dataArray);
-                    
-                    console.log("out preocessor");
                 }
-            }
-            else if (mode === 'train') {
-                if (picsCnt == TRAIN_BATCH_SIZE) {
+    
+                else if (this.mode === 'buffer') {
                     this._exampleCnt = 0;
-
-                        model.train(this._dataArray, this._labelsArray);
-
+                    this.dataset.addExample(this._dataArray, this._genre);           
                 }
             }
 
-            //await tf.nextFrame();
         }
-
-        this._source.connect(this.analyser);
-        this.analyser.connect(this.processor);
     }
 
 
@@ -151,7 +165,37 @@ export default class audio {
 
     }
 
-    stop() {
+
+
+    _connectNodes() {
+        if(this.mode === 'buffer') {       
+            this._bufferSource.connect(this._analyser);
+            this._bufferSource.connect(this._context.destination); 
+        }
+        else if (this.mode === 'stream') {
+            console.log(this._analyser);
+            console.log(this._streamSource);
+            this._streamSource.connect(this._analyser);
+        }
+        this._analyser.connect(this._processor);
+        this._processor.connect(this._context.destination); // ??? 
+    }
+
+
+    _getNewSong() {
+        const song =songsArr.pop();
+
+        // set the on-play song gerne
+        this._genre = song.genre;
+
+        // decode and start playing the song
+        this._context.decodeAudioData(song.buffer, (decodeData) => {
+            this._bufferSource.buffer = decodeData;
+            this._bufferSource.start(0);
+        });
+    }
+
+    close() {
         this._context.close();
     }
 }

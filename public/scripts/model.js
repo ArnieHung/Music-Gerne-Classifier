@@ -1,151 +1,97 @@
 import * as tf from '@tensorflow/tfjs';
 import {
-    GERNES, GERNES_NUM, MUSIC_NUM_PER_GERNE,
+    GENRES, GENRES_NUM, MUSIC_NUM_PER_GENRE,
     FREQ_NUM, PROCESS_NUM,
     PRED_BATCH_SIZE, TRAIN_BATCH_SIZE,
 } from './config.js';
 
 
-const MODEL_URL = 'http://localhost:3000/mobilenet/tensorflowjs_model.pb'; 
-const WEIGHTS_URL = 'http://localhost:3000/mobilenet/weights_manifest.json'; 
+const MODEL_URL = 'http://localhost:3000/truncated_model/tensorflowjs_model.pb'; 
+const WEIGHTS_URL = 'http://localhost:3000/truncated_model/weights_manifest.json'; 
 
 let model;
+let truncModel;
 
-export async function loadmodel() {
-    model =  await tf.loadFrozenModel(MODEL_URL, WEIGHTS_URL);
+model = tf.sequential({
+    layers: [
+      // Flattens the input to a vector so we can use it in a dense layer. While
+      // technically a layer, this only performs a reshape (and has no training
+      // parameters).
+      tf.layers.flatten({inputShape: [4, 4, 1024]}),
+      // Layer 1
+      tf.layers.dense({
+        units: 256,
+        activation: 'relu',
+        kernelInitializer: 'varianceScaling',
+        useBias: true
+      }),
+      // Layer 2. The number of units of the last layer should correspond
+      // to the number of classes we want to predict.
+      tf.layers.dense({
+        units: GENRES_NUM,
+        kernelInitializer: 'varianceScaling',
+        useBias: false,
+        activation: 'softmax'
+      })
+    ]
+});
+
+const optimizer = tf.train.sgd(0.1);
+model.compile({optimizer: optimizer, loss: 'categoricalCrossentropy'});
+
+
+
+export async function loadMobileNet() {
+    truncModel =  await tf.loadFrozenModel(MODEL_URL, WEIGHTS_URL);
+    //warm up ??
 } 
 
-// const model = tf.sequential();
-
-// model.add(tf.layers.conv2d({
-//     inputShape: [128, 128, 1],
-//     kernelSize: 2,
-//     filters: 64,
-//     strides: 1,
-//     activation: 'elu',
-//     kernelInitializer: 'glorotNormal'
-// }));
-
-// model.add(tf.layers.maxPooling2d({
-//     poolSize: [2, 2],
-//     strides: [2, 2]
-// }));
-
-// // model.add(tf.layers.conv2d({
-// //     kernelSize: 2,
-// //     filters: 128,
-// //     strides: 1,
-// //     activation: 'elu',
-// //     kernelInitializer: 'glorotNormal'
-// // }));
-
-// // model.add(tf.layers.maxPooling2d({
-// //     poolSize: [2, 2],
-// //     strides: [2, 2]
-// // }));
 
 
-// // model.add(tf.layers.conv2d({
-// //     kernelSize: 2,
-// //     filters: 256,
-// //     strides: 1,
-// //     activation: 'elu',
-// //     kernelInitializer: 'glorotNormal'
-// // }));
+export function getActivation (dataArray) { // will activation be dispose??
 
-// // model.add(tf.layers.maxPooling2d({
-// //     poolSize: [2, 2],
-// //     strides: [2, 2]
-// // }));
+    const activation = tf.tidy(() => {
+        const data = tf.tensor3d(dataArray, [1, 128, 128]); // arr --> tensor
+        const rgbData = tf.stack([data, data, data], 3);    // --> 3 rgb channel
+        const activation =  truncModel.predict(rgbData);
+        return activation;
+    });
 
-// // model.add(tf.layers.conv2d({
-// //     kernelSize: 2,
-// //     filters: 512,
-// //     strides: 1,
-// //     activation: 'elu',
-// //     kernelInitializer: 'glorotNormal'
-// // }));
+    return activation;
+}
 
-// // model.add(tf.layers.maxPooling2d({
-// //     poolSize: [2, 2],
-// //     strides: [2, 2]
-// // }));
 
-// model.add(tf.layers.flatten());
-
-// // model.add(tf.layers.dense({
-// //     units: 1024,
-// //     kernelInitializer: 'truncatedNormal',
-// //     activation: 'elu'
-// // }));
-
-// model.add(tf.layers.dense({
-//     units: 10,
-//     kernelInitializer: 'VarianceScaling',
-//     activation: 'softmax'
-// }));
-
-// const LEARNING_RATE = 0.001;
-
-// model.compile({
-//     optimizer: tf.train.rmsprop(LEARNING_RATE),
-//     loss: 'categoricalCrossentropy',
-//     metrics: ['accuracy'],
-// });
 
 export async function predict(dataArray) {
-    // tf.tidy(() => {
-    //     const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
-    //     model.predict(data);
-    //     //result.print();
-    // });
-    // const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
-    // const predictPromise = async() => {
-    //     return model.predict(data)
-    // };
-    // console.log("in predict");
-    // const prediction = await predictPromise();
-    // console.log("out predict");
 
-    // data.dispose();
-    // prediction.dispose();
- 
     const predictedClass = tf.tidy(() => {
-    
-        //const arr = new  Uint8Array(-1 * FREQ_NUM * FREQ_NUM);
-        const data = tf.tensor3d(dataArray, [1, 128, 128]);
-        const rgbData = tf.stack([data, data, data], 3);
-        const predictions = model.predict(rgbData);
+        const activation =  getActivation(dataArray);
+        const predictions = model.predict(activation);
         return predictions.as1D().argMax();
       });
   
       const classId = (await predictedClass.data())[0];
       predictedClass.dispose();
       console.log(classId);
-      console.log("hi");
+
       await tf.nextFrame();
     
 } 
 
-export async function train(dataArray, labelsArray) {
 
-    const data = tf.tensor4d(dataArray, [TRAIN_BATCH_SIZE, 128, 128, 1]);;
-    const labels = tf.oneHot(labelsArray, GERNES_NUM);
 
-    data.print();
-    labels.print();
-
-    const history = await model.fit(
-        data, labels,
-        {batchSize: TRAIN_BATCH_SIZE, epochs: 1}
+export async function train(dataset) {
+ 
+    model.fit(dataset.xs, dataset.ys, {
+            batchSize: 2, 
+            epochs: 3,
+            callbacks: {
+                onBatchEnd: async (batch, logs) => {
+                  console.log('Loss: ' + logs.loss.toFixed(5));
+                  await tf.nextFrame();
+                }
+            }
+        }
     );
 
-    console.log("examples trained!");
-    const loss = history.history.loss[0];
-    const accuracy = history.history.acc[0];
-    console.log(`loss: ${loss}`, `accuracy: ${accuracy}`);
-
-    tf.dispose(data, labels, history);
-
-    await tf.nextFrame();
 }

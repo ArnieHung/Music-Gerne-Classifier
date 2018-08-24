@@ -1,31 +1,50 @@
 import * as tf from '@tensorflow/tfjs';
 
 import audio from "./audio.js";
-import {loadmodel} from "./model.js";
+import {dataset, loadSongs, songsArr} from "./data.js";
+import {loadMobileNet, train} from "./model.js";
 
 
-//tf.setBackend("webgl");
+window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
 
-const recordBtn = document.getElementById("Record");
-const trainBtn = document.getElementById("Train");
-const stopBtn = document.getElementById("Stop");
+loadMobileNet();
+loadSongs();
 
-let Audio;
+let myAudio = null;
+const myDataset = new dataset();
 
-recordBtn.onclick = () => {
-    Audio = new audio('record');
+const RecordBtn = document.getElementById("Record");
+const AddExampleBtn = document.getElementById("AddExample");
+const TrainBtn  = document.getElementById("Train");
+const StopBtn   = document.getElementById("Stop");
+
+
+RecordBtn.onclick = () => {
+    if(myAudio === null) {
+        myAudio = new audio(myDataset, 'stream');
+    }
 }
 
-trainBtn.onclick = () => {
-    Audio = new audio('train');
+AddExampleBtn.onclick = () => {
+    if(myAudio === null){
+        myAudio = new audio(myDataset, 'buffer');
+    }
 }
 
-stopBtn.onclick = () => {
-    Audio.stop();
+
+TrainBtn.onclick = () => {
+    train(myDataset);
 }
 
-loadmodel();
+StopBtn.onclick = () => {
+    if(myAudio !== null) {
+        myAudio.close();
+        myAudio = null;
+    }
+}
 
-console.log("backend: ", tf.getBackend());
+
+
+// console.log("backend: ", tf.getBackend());
 
 

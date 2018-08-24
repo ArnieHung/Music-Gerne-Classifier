@@ -33570,264 +33570,7 @@ Object.keys(_tfjsConverter).forEach(function (key) {
 var version = "0.12.5",
     version$1 = { "tfjs-core": _tfjsCore.version_core, "tfjs-layers": _tfjsLayers.version_layers, "tfjs-converter": _tfjsConverter.version_converter, tfjs: version };exports.version = version$1;
 //# sourceMappingURL=tf.esm.js.map
-},{"@tensorflow/tfjs-core":"..\\node_modules\\@tensorflow\\tfjs-core\\dist\\tf-core.esm.js","@tensorflow/tfjs-layers":"..\\node_modules\\@tensorflow\\tfjs-layers\\dist\\tf-layers.esm.js","@tensorflow/tfjs-converter":"..\\node_modules\\@tensorflow\\tfjs-converter\\dist\\tf-converter.esm.js"}],"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js":[function(require,module,exports) {
-"use strict";
-
-exports.__esModule = true;
-
-exports.default = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-},{}],"..\\node_modules\\core-js\\library\\modules\\_global.js":[function(require,module,exports) {
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self
-  // eslint-disable-next-line no-new-func
-  : Function('return this')();
-if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
-
-},{}],"..\\node_modules\\core-js\\library\\modules\\_core.js":[function(require,module,exports) {
-var core = module.exports = { version: '2.5.7' };
-if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
-
-},{}],"..\\node_modules\\core-js\\library\\modules\\_a-function.js":[function(require,module,exports) {
-module.exports = function (it) {
-  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
-  return it;
-};
-
-},{}],"..\\node_modules\\core-js\\library\\modules\\_ctx.js":[function(require,module,exports) {
-// optional / simple context binding
-var aFunction = require('./_a-function');
-module.exports = function (fn, that, length) {
-  aFunction(fn);
-  if (that === undefined) return fn;
-  switch (length) {
-    case 1: return function (a) {
-      return fn.call(that, a);
-    };
-    case 2: return function (a, b) {
-      return fn.call(that, a, b);
-    };
-    case 3: return function (a, b, c) {
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function (/* ...args */) {
-    return fn.apply(that, arguments);
-  };
-};
-
-},{"./_a-function":"..\\node_modules\\core-js\\library\\modules\\_a-function.js"}],"..\\node_modules\\core-js\\library\\modules\\_is-object.js":[function(require,module,exports) {
-module.exports = function (it) {
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-
-},{}],"..\\node_modules\\core-js\\library\\modules\\_an-object.js":[function(require,module,exports) {
-var isObject = require('./_is-object');
-module.exports = function (it) {
-  if (!isObject(it)) throw TypeError(it + ' is not an object!');
-  return it;
-};
-
-},{"./_is-object":"..\\node_modules\\core-js\\library\\modules\\_is-object.js"}],"..\\node_modules\\core-js\\library\\modules\\_fails.js":[function(require,module,exports) {
-module.exports = function (exec) {
-  try {
-    return !!exec();
-  } catch (e) {
-    return true;
-  }
-};
-
-},{}],"..\\node_modules\\core-js\\library\\modules\\_descriptors.js":[function(require,module,exports) {
-// Thank's IE8 for his funny defineProperty
-module.exports = !require('./_fails')(function () {
-  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
-});
-
-},{"./_fails":"..\\node_modules\\core-js\\library\\modules\\_fails.js"}],"..\\node_modules\\core-js\\library\\modules\\_dom-create.js":[function(require,module,exports) {
-var isObject = require('./_is-object');
-var document = require('./_global').document;
-// typeof document.createElement is 'object' in old IE
-var is = isObject(document) && isObject(document.createElement);
-module.exports = function (it) {
-  return is ? document.createElement(it) : {};
-};
-
-},{"./_is-object":"..\\node_modules\\core-js\\library\\modules\\_is-object.js","./_global":"..\\node_modules\\core-js\\library\\modules\\_global.js"}],"..\\node_modules\\core-js\\library\\modules\\_ie8-dom-define.js":[function(require,module,exports) {
-module.exports = !require('./_descriptors') && !require('./_fails')(function () {
-  return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
-});
-
-},{"./_descriptors":"..\\node_modules\\core-js\\library\\modules\\_descriptors.js","./_fails":"..\\node_modules\\core-js\\library\\modules\\_fails.js","./_dom-create":"..\\node_modules\\core-js\\library\\modules\\_dom-create.js"}],"..\\node_modules\\core-js\\library\\modules\\_to-primitive.js":[function(require,module,exports) {
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = require('./_is-object');
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function (it, S) {
-  if (!isObject(it)) return it;
-  var fn, val;
-  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  throw TypeError("Can't convert object to primitive value");
-};
-
-},{"./_is-object":"..\\node_modules\\core-js\\library\\modules\\_is-object.js"}],"..\\node_modules\\core-js\\library\\modules\\_object-dp.js":[function(require,module,exports) {
-var anObject = require('./_an-object');
-var IE8_DOM_DEFINE = require('./_ie8-dom-define');
-var toPrimitive = require('./_to-primitive');
-var dP = Object.defineProperty;
-
-exports.f = require('./_descriptors') ? Object.defineProperty : function defineProperty(O, P, Attributes) {
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if (IE8_DOM_DEFINE) try {
-    return dP(O, P, Attributes);
-  } catch (e) { /* empty */ }
-  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
-  if ('value' in Attributes) O[P] = Attributes.value;
-  return O;
-};
-
-},{"./_an-object":"..\\node_modules\\core-js\\library\\modules\\_an-object.js","./_ie8-dom-define":"..\\node_modules\\core-js\\library\\modules\\_ie8-dom-define.js","./_to-primitive":"..\\node_modules\\core-js\\library\\modules\\_to-primitive.js","./_descriptors":"..\\node_modules\\core-js\\library\\modules\\_descriptors.js"}],"..\\node_modules\\core-js\\library\\modules\\_property-desc.js":[function(require,module,exports) {
-module.exports = function (bitmap, value) {
-  return {
-    enumerable: !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable: !(bitmap & 4),
-    value: value
-  };
-};
-
-},{}],"..\\node_modules\\core-js\\library\\modules\\_hide.js":[function(require,module,exports) {
-var dP = require('./_object-dp');
-var createDesc = require('./_property-desc');
-module.exports = require('./_descriptors') ? function (object, key, value) {
-  return dP.f(object, key, createDesc(1, value));
-} : function (object, key, value) {
-  object[key] = value;
-  return object;
-};
-
-},{"./_object-dp":"..\\node_modules\\core-js\\library\\modules\\_object-dp.js","./_property-desc":"..\\node_modules\\core-js\\library\\modules\\_property-desc.js","./_descriptors":"..\\node_modules\\core-js\\library\\modules\\_descriptors.js"}],"..\\node_modules\\core-js\\library\\modules\\_has.js":[function(require,module,exports) {
-var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function (it, key) {
-  return hasOwnProperty.call(it, key);
-};
-
-},{}],"..\\node_modules\\core-js\\library\\modules\\_export.js":[function(require,module,exports) {
-
-var global = require('./_global');
-var core = require('./_core');
-var ctx = require('./_ctx');
-var hide = require('./_hide');
-var has = require('./_has');
-var PROTOTYPE = 'prototype';
-
-var $export = function (type, name, source) {
-  var IS_FORCED = type & $export.F;
-  var IS_GLOBAL = type & $export.G;
-  var IS_STATIC = type & $export.S;
-  var IS_PROTO = type & $export.P;
-  var IS_BIND = type & $export.B;
-  var IS_WRAP = type & $export.W;
-  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
-  var expProto = exports[PROTOTYPE];
-  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE];
-  var key, own, out;
-  if (IS_GLOBAL) source = name;
-  for (key in source) {
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && has(exports, key)) continue;
-    // export native or passed
-    out = own ? target[key] : source[key];
-    // prevent global pollution for namespaces
-    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-    // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global)
-    // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function (C) {
-      var F = function (a, b, c) {
-        if (this instanceof C) {
-          switch (arguments.length) {
-            case 0: return new C();
-            case 1: return new C(a);
-            case 2: return new C(a, b);
-          } return new C(a, b, c);
-        } return C.apply(this, arguments);
-      };
-      F[PROTOTYPE] = C[PROTOTYPE];
-      return F;
-    // make static versions for prototype methods
-    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if (IS_PROTO) {
-      (exports.virtual || (exports.virtual = {}))[key] = out;
-      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if (type & $export.R && expProto && !expProto[key]) hide(expProto, key, out);
-    }
-  }
-};
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library`
-module.exports = $export;
-
-},{"./_global":"..\\node_modules\\core-js\\library\\modules\\_global.js","./_core":"..\\node_modules\\core-js\\library\\modules\\_core.js","./_ctx":"..\\node_modules\\core-js\\library\\modules\\_ctx.js","./_hide":"..\\node_modules\\core-js\\library\\modules\\_hide.js","./_has":"..\\node_modules\\core-js\\library\\modules\\_has.js"}],"..\\node_modules\\core-js\\library\\modules\\es6.object.define-property.js":[function(require,module,exports) {
-var $export = require('./_export');
-// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperty: require('./_object-dp').f });
-
-},{"./_export":"..\\node_modules\\core-js\\library\\modules\\_export.js","./_descriptors":"..\\node_modules\\core-js\\library\\modules\\_descriptors.js","./_object-dp":"..\\node_modules\\core-js\\library\\modules\\_object-dp.js"}],"..\\node_modules\\core-js\\library\\fn\\object\\define-property.js":[function(require,module,exports) {
-require('../../modules/es6.object.define-property');
-var $Object = require('../../modules/_core').Object;
-module.exports = function defineProperty(it, key, desc) {
-  return $Object.defineProperty(it, key, desc);
-};
-
-},{"../../modules/es6.object.define-property":"..\\node_modules\\core-js\\library\\modules\\es6.object.define-property.js","../../modules/_core":"..\\node_modules\\core-js\\library\\modules\\_core.js"}],"..\\node_modules\\babel-runtime\\core-js\\object\\define-property.js":[function(require,module,exports) {
-module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":"..\\node_modules\\core-js\\library\\fn\\object\\define-property.js"}],"..\\node_modules\\babel-runtime\\helpers\\createClass.js":[function(require,module,exports) {
-"use strict";
-
-exports.__esModule = true;
-
-var _defineProperty = require("../core-js/object/define-property");
-
-var _defineProperty2 = _interopRequireDefault(_defineProperty);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-},{"../core-js/object/define-property":"..\\node_modules\\babel-runtime\\core-js\\object\\define-property.js"}],"..\\node_modules\\regenerator-runtime\\runtime.js":[function(require,module,exports) {
+},{"@tensorflow/tfjs-core":"..\\node_modules\\@tensorflow\\tfjs-core\\dist\\tf-core.esm.js","@tensorflow/tfjs-layers":"..\\node_modules\\@tensorflow\\tfjs-layers\\dist\\tf-layers.esm.js","@tensorflow/tfjs-converter":"..\\node_modules\\@tensorflow\\tfjs-converter\\dist\\tf-converter.esm.js"}],"..\\node_modules\\regenerator-runtime\\runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -34636,7 +34379,212 @@ module.exports = function (TO_STRING) {
 },{"./_to-integer":"..\\node_modules\\core-js\\library\\modules\\_to-integer.js","./_defined":"..\\node_modules\\core-js\\library\\modules\\_defined.js"}],"..\\node_modules\\core-js\\library\\modules\\_library.js":[function(require,module,exports) {
 module.exports = true;
 
-},{}],"..\\node_modules\\core-js\\library\\modules\\_redefine.js":[function(require,module,exports) {
+},{}],"..\\node_modules\\core-js\\library\\modules\\_global.js":[function(require,module,exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self
+  // eslint-disable-next-line no-new-func
+  : Function('return this')();
+if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+
+},{}],"..\\node_modules\\core-js\\library\\modules\\_core.js":[function(require,module,exports) {
+var core = module.exports = { version: '2.5.7' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+
+},{}],"..\\node_modules\\core-js\\library\\modules\\_a-function.js":[function(require,module,exports) {
+module.exports = function (it) {
+  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
+  return it;
+};
+
+},{}],"..\\node_modules\\core-js\\library\\modules\\_ctx.js":[function(require,module,exports) {
+// optional / simple context binding
+var aFunction = require('./_a-function');
+module.exports = function (fn, that, length) {
+  aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
+
+},{"./_a-function":"..\\node_modules\\core-js\\library\\modules\\_a-function.js"}],"..\\node_modules\\core-js\\library\\modules\\_is-object.js":[function(require,module,exports) {
+module.exports = function (it) {
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+},{}],"..\\node_modules\\core-js\\library\\modules\\_an-object.js":[function(require,module,exports) {
+var isObject = require('./_is-object');
+module.exports = function (it) {
+  if (!isObject(it)) throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+},{"./_is-object":"..\\node_modules\\core-js\\library\\modules\\_is-object.js"}],"..\\node_modules\\core-js\\library\\modules\\_fails.js":[function(require,module,exports) {
+module.exports = function (exec) {
+  try {
+    return !!exec();
+  } catch (e) {
+    return true;
+  }
+};
+
+},{}],"..\\node_modules\\core-js\\library\\modules\\_descriptors.js":[function(require,module,exports) {
+// Thank's IE8 for his funny defineProperty
+module.exports = !require('./_fails')(function () {
+  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
+});
+
+},{"./_fails":"..\\node_modules\\core-js\\library\\modules\\_fails.js"}],"..\\node_modules\\core-js\\library\\modules\\_dom-create.js":[function(require,module,exports) {
+var isObject = require('./_is-object');
+var document = require('./_global').document;
+// typeof document.createElement is 'object' in old IE
+var is = isObject(document) && isObject(document.createElement);
+module.exports = function (it) {
+  return is ? document.createElement(it) : {};
+};
+
+},{"./_is-object":"..\\node_modules\\core-js\\library\\modules\\_is-object.js","./_global":"..\\node_modules\\core-js\\library\\modules\\_global.js"}],"..\\node_modules\\core-js\\library\\modules\\_ie8-dom-define.js":[function(require,module,exports) {
+module.exports = !require('./_descriptors') && !require('./_fails')(function () {
+  return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
+});
+
+},{"./_descriptors":"..\\node_modules\\core-js\\library\\modules\\_descriptors.js","./_fails":"..\\node_modules\\core-js\\library\\modules\\_fails.js","./_dom-create":"..\\node_modules\\core-js\\library\\modules\\_dom-create.js"}],"..\\node_modules\\core-js\\library\\modules\\_to-primitive.js":[function(require,module,exports) {
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = require('./_is-object');
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function (it, S) {
+  if (!isObject(it)) return it;
+  var fn, val;
+  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+},{"./_is-object":"..\\node_modules\\core-js\\library\\modules\\_is-object.js"}],"..\\node_modules\\core-js\\library\\modules\\_object-dp.js":[function(require,module,exports) {
+var anObject = require('./_an-object');
+var IE8_DOM_DEFINE = require('./_ie8-dom-define');
+var toPrimitive = require('./_to-primitive');
+var dP = Object.defineProperty;
+
+exports.f = require('./_descriptors') ? Object.defineProperty : function defineProperty(O, P, Attributes) {
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if (IE8_DOM_DEFINE) try {
+    return dP(O, P, Attributes);
+  } catch (e) { /* empty */ }
+  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
+  if ('value' in Attributes) O[P] = Attributes.value;
+  return O;
+};
+
+},{"./_an-object":"..\\node_modules\\core-js\\library\\modules\\_an-object.js","./_ie8-dom-define":"..\\node_modules\\core-js\\library\\modules\\_ie8-dom-define.js","./_to-primitive":"..\\node_modules\\core-js\\library\\modules\\_to-primitive.js","./_descriptors":"..\\node_modules\\core-js\\library\\modules\\_descriptors.js"}],"..\\node_modules\\core-js\\library\\modules\\_property-desc.js":[function(require,module,exports) {
+module.exports = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+},{}],"..\\node_modules\\core-js\\library\\modules\\_hide.js":[function(require,module,exports) {
+var dP = require('./_object-dp');
+var createDesc = require('./_property-desc');
+module.exports = require('./_descriptors') ? function (object, key, value) {
+  return dP.f(object, key, createDesc(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
+
+},{"./_object-dp":"..\\node_modules\\core-js\\library\\modules\\_object-dp.js","./_property-desc":"..\\node_modules\\core-js\\library\\modules\\_property-desc.js","./_descriptors":"..\\node_modules\\core-js\\library\\modules\\_descriptors.js"}],"..\\node_modules\\core-js\\library\\modules\\_has.js":[function(require,module,exports) {
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
+},{}],"..\\node_modules\\core-js\\library\\modules\\_export.js":[function(require,module,exports) {
+
+var global = require('./_global');
+var core = require('./_core');
+var ctx = require('./_ctx');
+var hide = require('./_hide');
+var has = require('./_has');
+var PROTOTYPE = 'prototype';
+
+var $export = function (type, name, source) {
+  var IS_FORCED = type & $export.F;
+  var IS_GLOBAL = type & $export.G;
+  var IS_STATIC = type & $export.S;
+  var IS_PROTO = type & $export.P;
+  var IS_BIND = type & $export.B;
+  var IS_WRAP = type & $export.W;
+  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
+  var expProto = exports[PROTOTYPE];
+  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE];
+  var key, own, out;
+  if (IS_GLOBAL) source = name;
+  for (key in source) {
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if (own && has(exports, key)) continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function (C) {
+      var F = function (a, b, c) {
+        if (this instanceof C) {
+          switch (arguments.length) {
+            case 0: return new C();
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if (IS_PROTO) {
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if (type & $export.R && expProto && !expProto[key]) hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library`
+module.exports = $export;
+
+},{"./_global":"..\\node_modules\\core-js\\library\\modules\\_global.js","./_core":"..\\node_modules\\core-js\\library\\modules\\_core.js","./_ctx":"..\\node_modules\\core-js\\library\\modules\\_ctx.js","./_hide":"..\\node_modules\\core-js\\library\\modules\\_hide.js","./_has":"..\\node_modules\\core-js\\library\\modules\\_has.js"}],"..\\node_modules\\core-js\\library\\modules\\_redefine.js":[function(require,module,exports) {
 module.exports = require('./_hide');
 
 },{"./_hide":"..\\node_modules\\core-js\\library\\modules\\_hide.js"}],"..\\node_modules\\core-js\\library\\modules\\_iterators.js":[function(require,module,exports) {
@@ -35807,15 +35755,67 @@ exports.default = function (fn) {
     });
   };
 };
-},{"../core-js/promise":"..\\node_modules\\babel-runtime\\core-js\\promise.js"}],"scripts\\config.js":[function(require,module,exports) {
+},{"../core-js/promise":"..\\node_modules\\babel-runtime\\core-js\\promise.js"}],"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js":[function(require,module,exports) {
+"use strict";
+
+exports.__esModule = true;
+
+exports.default = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+},{}],"..\\node_modules\\core-js\\library\\modules\\es6.object.define-property.js":[function(require,module,exports) {
+var $export = require('./_export');
+// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
+$export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperty: require('./_object-dp').f });
+
+},{"./_export":"..\\node_modules\\core-js\\library\\modules\\_export.js","./_descriptors":"..\\node_modules\\core-js\\library\\modules\\_descriptors.js","./_object-dp":"..\\node_modules\\core-js\\library\\modules\\_object-dp.js"}],"..\\node_modules\\core-js\\library\\fn\\object\\define-property.js":[function(require,module,exports) {
+require('../../modules/es6.object.define-property');
+var $Object = require('../../modules/_core').Object;
+module.exports = function defineProperty(it, key, desc) {
+  return $Object.defineProperty(it, key, desc);
+};
+
+},{"../../modules/es6.object.define-property":"..\\node_modules\\core-js\\library\\modules\\es6.object.define-property.js","../../modules/_core":"..\\node_modules\\core-js\\library\\modules\\_core.js"}],"..\\node_modules\\babel-runtime\\core-js\\object\\define-property.js":[function(require,module,exports) {
+module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
+},{"core-js/library/fn/object/define-property":"..\\node_modules\\core-js\\library\\fn\\object\\define-property.js"}],"..\\node_modules\\babel-runtime\\helpers\\createClass.js":[function(require,module,exports) {
+"use strict";
+
+exports.__esModule = true;
+
+var _defineProperty = require("../core-js/object/define-property");
+
+var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+},{"../core-js/object/define-property":"..\\node_modules\\babel-runtime\\core-js\\object\\define-property.js"}],"scripts\\config.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var GERNES = ['test', 'jazz', 'classical', 'reggae', 'hiphop'];
-var GERNES_NUM = 10;
-var MUSIC_NUM_PER_GERNE = 1;
+var GENRES = ['jazz', 'classical', 'reggae', 'hiphop'];
+var GENRES_NUM = 4;
+var MUSIC_NUM_PER_GENRE = 5;
 
 var FREQ_NUM = 128;
 var PROCESS_NUM = 1024;
@@ -35823,9 +35823,9 @@ var PROCESS_NUM = 1024;
 var PRED_BATCH_SIZE = 1;
 var TRAIN_BATCH_SIZE = 2;
 
-exports.GERNES = GERNES;
-exports.GERNES_NUM = GERNES_NUM;
-exports.MUSIC_NUM_PER_GERNE = MUSIC_NUM_PER_GERNE;
+exports.GENRES = GENRES;
+exports.GENRES_NUM = GENRES_NUM;
+exports.MUSIC_NUM_PER_GENRE = MUSIC_NUM_PER_GENRE;
 exports.FREQ_NUM = FREQ_NUM;
 exports.PROCESS_NUM = PROCESS_NUM;
 exports.PRED_BATCH_SIZE = PRED_BATCH_SIZE;
@@ -35836,7 +35836,7 @@ exports.TRAIN_BATCH_SIZE = TRAIN_BATCH_SIZE;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.train = exports.predict = exports.loadmodel = undefined;
+exports.train = exports.predict = exports.loadMobileNet = undefined;
 
 var _regenerator = require('babel-runtime/regenerator');
 
@@ -35846,7 +35846,7 @@ var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-var loadmodel = exports.loadmodel = function () {
+var loadMobileNet = exports.loadMobileNet = function () {
     var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
         return _regenerator2.default.wrap(function _callee$(_context) {
             while (1) {
@@ -35856,7 +35856,7 @@ var loadmodel = exports.loadmodel = function () {
                         return tf.loadFrozenModel(MODEL_URL, WEIGHTS_URL);
 
                     case 2:
-                        model = _context.sent;
+                        truncModel = _context.sent;
 
                     case 3:
                     case 'end':
@@ -35866,88 +35866,10 @@ var loadmodel = exports.loadmodel = function () {
         }, _callee, this);
     }));
 
-    return function loadmodel() {
+    return function loadMobileNet() {
         return _ref.apply(this, arguments);
     };
 }();
-
-// const model = tf.sequential();
-
-// model.add(tf.layers.conv2d({
-//     inputShape: [128, 128, 1],
-//     kernelSize: 2,
-//     filters: 64,
-//     strides: 1,
-//     activation: 'elu',
-//     kernelInitializer: 'glorotNormal'
-// }));
-
-// model.add(tf.layers.maxPooling2d({
-//     poolSize: [2, 2],
-//     strides: [2, 2]
-// }));
-
-// // model.add(tf.layers.conv2d({
-// //     kernelSize: 2,
-// //     filters: 128,
-// //     strides: 1,
-// //     activation: 'elu',
-// //     kernelInitializer: 'glorotNormal'
-// // }));
-
-// // model.add(tf.layers.maxPooling2d({
-// //     poolSize: [2, 2],
-// //     strides: [2, 2]
-// // }));
-
-
-// // model.add(tf.layers.conv2d({
-// //     kernelSize: 2,
-// //     filters: 256,
-// //     strides: 1,
-// //     activation: 'elu',
-// //     kernelInitializer: 'glorotNormal'
-// // }));
-
-// // model.add(tf.layers.maxPooling2d({
-// //     poolSize: [2, 2],
-// //     strides: [2, 2]
-// // }));
-
-// // model.add(tf.layers.conv2d({
-// //     kernelSize: 2,
-// //     filters: 512,
-// //     strides: 1,
-// //     activation: 'elu',
-// //     kernelInitializer: 'glorotNormal'
-// // }));
-
-// // model.add(tf.layers.maxPooling2d({
-// //     poolSize: [2, 2],
-// //     strides: [2, 2]
-// // }));
-
-// model.add(tf.layers.flatten());
-
-// // model.add(tf.layers.dense({
-// //     units: 1024,
-// //     kernelInitializer: 'truncatedNormal',
-// //     activation: 'elu'
-// // }));
-
-// model.add(tf.layers.dense({
-//     units: 10,
-//     kernelInitializer: 'VarianceScaling',
-//     activation: 'softmax'
-// }));
-
-// const LEARNING_RATE = 0.001;
-
-// model.compile({
-//     optimizer: tf.train.rmsprop(LEARNING_RATE),
-//     loss: 'categoricalCrossentropy',
-//     metrics: ['accuracy'],
-// });
 
 var predict = exports.predict = function () {
     var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2(dataArray) {
@@ -35956,28 +35878,9 @@ var predict = exports.predict = function () {
             while (1) {
                 switch (_context2.prev = _context2.next) {
                     case 0:
-                        // tf.tidy(() => {
-                        //     const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
-                        //     model.predict(data);
-                        //     //result.print();
-                        // });
-                        // const data = tf.tensor4d(dataArray, [PRED_BATCH_SIZE, 128, 128, 1]);
-                        // const predictPromise = async() => {
-                        //     return model.predict(data)
-                        // };
-                        // console.log("in predict");
-                        // const prediction = await predictPromise();
-                        // console.log("out predict");
-
-                        // data.dispose();
-                        // prediction.dispose();
-
                         predictedClass = tf.tidy(function () {
-
-                            //const arr = new  Uint8Array(-1 * FREQ_NUM * FREQ_NUM);
-                            var data = tf.tensor3d(dataArray, [1, 128, 128]);
-                            var rgbData = tf.stack([data, data, data], 3);
-                            var predictions = model.predict(rgbData);
+                            var activation = getActivation(dataArray);
+                            var predictions = model.predict(activation);
                             return predictions.as1D().argMax();
                         });
                         _context2.next = 3;
@@ -35988,11 +35891,11 @@ var predict = exports.predict = function () {
 
                         predictedClass.dispose();
                         console.log(classId);
-                        console.log("hi");
-                        _context2.next = 9;
+
+                        _context2.next = 8;
                         return tf.nextFrame();
 
-                    case 9:
+                    case 8:
                     case 'end':
                         return _context2.stop();
                 }
@@ -36006,50 +35909,59 @@ var predict = exports.predict = function () {
 }();
 
 var train = exports.train = function () {
-    var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(dataArray, labelsArray) {
-        var data, labels, history, loss, accuracy;
-        return _regenerator2.default.wrap(function _callee3$(_context3) {
+    var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(dataset) {
+        var _this = this;
+
+        return _regenerator2.default.wrap(function _callee4$(_context4) {
             while (1) {
-                switch (_context3.prev = _context3.next) {
+                switch (_context4.prev = _context4.next) {
                     case 0:
-                        data = tf.tensor4d(dataArray, [_config.TRAIN_BATCH_SIZE, 128, 128, 1]);
-                        ;
-                        labels = tf.oneHot(labelsArray, _config.GERNES_NUM);
 
+                        model.fit(dataset.xs, dataset.ys, {
+                            batchSize: 2,
+                            epochs: 3,
+                            callbacks: {
+                                onBatchEnd: function () {
+                                    var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(batch, logs) {
+                                        return _regenerator2.default.wrap(function _callee3$(_context3) {
+                                            while (1) {
+                                                switch (_context3.prev = _context3.next) {
+                                                    case 0:
+                                                        console.log('Loss: ' + logs.loss.toFixed(5));
+                                                        _context3.next = 3;
+                                                        return tf.nextFrame();
 
-                        data.print();
-                        labels.print();
+                                                    case 3:
+                                                    case 'end':
+                                                        return _context3.stop();
+                                                }
+                                            }
+                                        }, _callee3, _this);
+                                    }));
 
-                        _context3.next = 7;
-                        return model.fit(data, labels, { batchSize: _config.TRAIN_BATCH_SIZE, epochs: 1 });
+                                    function onBatchEnd(_x3, _x4) {
+                                        return _ref4.apply(this, arguments);
+                                    }
 
-                    case 7:
-                        history = _context3.sent;
+                                    return onBatchEnd;
+                                }()
+                            }
+                        });
 
-
-                        console.log("examples trained!");
-                        loss = history.history.loss[0];
-                        accuracy = history.history.acc[0];
-
-                        console.log('loss: ' + loss, 'accuracy: ' + accuracy);
-
-                        tf.dispose(data, labels, history);
-
-                        _context3.next = 15;
-                        return tf.nextFrame();
-
-                    case 15:
+                    case 1:
                     case 'end':
-                        return _context3.stop();
+                        return _context4.stop();
                 }
             }
-        }, _callee3, this);
+        }, _callee4, this);
     }));
 
-    return function train(_x2, _x3) {
+    return function train(_x2) {
         return _ref3.apply(this, arguments);
     };
 }();
+
+exports.getActivation = getActivation;
 
 var _tfjs = require('@tensorflow/tfjs');
 
@@ -36061,16 +35973,184 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var MODEL_URL = 'http://localhost:3000/mobilenet/tensorflowjs_model.pb';
-var WEIGHTS_URL = 'http://localhost:3000/mobilenet/weights_manifest.json';
+var MODEL_URL = 'http://localhost:3000/truncated_model/tensorflowjs_model.pb';
+var WEIGHTS_URL = 'http://localhost:3000/truncated_model/weights_manifest.json';
 
 var model = void 0;
-},{"babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./config.js":"scripts\\config.js"}],"scripts\\audio.js":[function(require,module,exports) {
+var truncModel = void 0;
+
+model = tf.sequential({
+    layers: [
+    // Flattens the input to a vector so we can use it in a dense layer. While
+    // technically a layer, this only performs a reshape (and has no training
+    // parameters).
+    tf.layers.flatten({ inputShape: [4, 4, 1024] }),
+    // Layer 1
+    tf.layers.dense({
+        units: 256,
+        activation: 'relu',
+        kernelInitializer: 'varianceScaling',
+        useBias: true
+    }),
+    // Layer 2. The number of units of the last layer should correspond
+    // to the number of classes we want to predict.
+    tf.layers.dense({
+        units: _config.GENRES_NUM,
+        kernelInitializer: 'varianceScaling',
+        useBias: false,
+        activation: 'softmax'
+    })]
+});
+
+var optimizer = tf.train.sgd(0.1);
+model.compile({ optimizer: optimizer, loss: 'categoricalCrossentropy' });
+
+function getActivation(dataArray) {
+    // will activation be dispose??
+
+    var activation = tf.tidy(function () {
+        var data = tf.tensor3d(dataArray, [1, 128, 128]); // arr --> tensor
+        var rgbData = tf.stack([data, data, data], 3); // --> 3 rgb channel
+        var activation = truncModel.predict(rgbData);
+        return activation;
+    });
+
+    return activation;
+}
+},{"babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./config.js":"scripts\\config.js"}],"scripts\\data.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.dataset = exports.loadSongs = exports.songsArr = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var loadSongs = exports.loadSongs = function () {
+  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
+    var _loop, genre;
+
+    return _regenerator2.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _loop = function _loop(genre) {
+              for (var idx = 0; idx < _config.MUSIC_NUM_PER_GENRE; idx++) {
+
+                var GENRE = _config.GENRES[genre];
+                console.log(GENRE);
+                var IDX = ('0000' + idx).slice(-5);
+                var URL = 'http://localhost:3000/musics/' + GENRE + '/' + GENRE + '.' + IDX + '.wav';
+
+                fetch(URL).then(function (res) {
+                  return res.arrayBuffer();
+                }).then(function (buffer) {
+                  console.log(genre);
+                  var song = { genre: genre, buffer: buffer };
+                  songsArr.push(song);
+                });
+              }
+            };
+
+            for (genre = 0; genre < _config.GENRES_NUM; genre++) {
+              _loop(genre);
+            }
+
+          case 2:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  return function loadSongs() {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+var _tfjs = require('@tensorflow/tfjs');
+
+var tf = _interopRequireWildcard(_tfjs);
+
+var _config = require('./config.js');
+
+var _model = require('./model.js');
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var songsArr = exports.songsArr = [];
+
+var dataset = exports.dataset = function () {
+  function dataset() {
+    (0, _classCallCheck3.default)(this, dataset);
+
+    this.numClasses = _config.GENRES_NUM;
+  }
+
+  (0, _createClass3.default)(dataset, [{
+    key: 'addExample',
+    value: function addExample(dataArray, label) {
+      var _this = this;
+
+      console.log(dataArray, label);
+
+      var x = (0, _model.getActivation)(dataArray);
+      var y = tf.tidy(function () {
+        return tf.oneHot(tf.tensor1d([label]).toInt(), _this.numClasses);
+      });
+
+      if (this.xs == null) {
+        this.xs = tf.keep(x);
+        this.ys = tf.keep(y);
+      } else {
+        var oldX = this.xs;
+        this.xs = tf.keep(oldX.concat(x, 0));
+
+        var oldY = this.ys;
+        this.ys = tf.keep(oldY.concat(y, 0));
+
+        oldX.dispose();
+        oldY.dispose();
+        y.dispose();
+      }
+      console.log(this.xs);
+      console.log(this.ys);
+    }
+  }]);
+  return dataset;
+}();
+},{"babel-runtime/helpers/classCallCheck":"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js","babel-runtime/helpers/createClass":"..\\node_modules\\babel-runtime\\helpers\\createClass.js","babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./config.js":"scripts\\config.js","./model.js":"scripts\\model.js"}],"scripts\\audio.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
@@ -36086,26 +36166,39 @@ var model = _interopRequireWildcard(_model);
 
 var _config = require('./config.js');
 
+var _data = require('./data.js');
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var audio = function () {
-    function audio(mode) {
+    function audio(dataset, mode) {
         var _this = this;
 
         (0, _classCallCheck3.default)(this, audio);
 
 
-        window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
-        this.analyser = null;
-        this.processor = null;
+        this.dataset = dataset;
+        this.mode = mode;
+
+        // data buffer array to store sound image, 
+        // converted to tensor later.
+        this._dataArray = new Uint8Array(_config.FREQ_NUM * _config.FREQ_NUM);
+
+        // declare web audio nodes
+        this._context = new AudioContext();
+        this._streamSource = null;
+        this._bufferSource = null;
+        this._analyser = null;
+        this._processor = null;
+
         this._exampleCnt = 0;
 
-        this._MAX_BATCH_SIZE = Math.max(_config.PRED_BATCH_SIZE, _config.TRAIN_BATCH_SIZE);
+        // current genre
+        this._genre = null;
 
-        this._context = new AudioContext();
-
+        // canvas 
         this._canvas = document.getElementById("visualizer");
         this._ctx = this._canvas.getContext("2d");
 
@@ -36114,101 +36207,162 @@ var audio = function () {
         this._canvasTmp.height = 200;
         this._ctxTmp = this._canvasTmp.getContext("2d");
 
-        this.flag = 1;
+        // build web audio graph
 
-        if (mode === 'record') {
-            this._dataArray = new Uint8Array(_config.PRED_BATCH_SIZE * _config.FREQ_NUM * _config.FREQ_NUM);
-            this._labelsArray = new Uint8Array(_config.PRED_BATCH_SIZE);
+        this._createAnalyzer();
 
-            if (navigator.mediaDevices.getUserMedia) {
-                console.log('getUserMedia supported.');
-                var constraints = { audio: true };
-                var stream = void 0;
-                navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-                    _this._source = _this._context.createMediaStreamSource(stream);
-                    _this._setProcessor(mode);
-                }).catch(function (err) {
-                    console.log('The following gUM error occured: ' + err);
-                });
-            } else {
-                console.log('getUserMedia not supported on your browser!');
-            }
-        } else if (mode === 'train') {
-            this._dataArray = new Uint8Array(_config.TRAIN_BATCH_SIZE * _config.FREQ_NUM * _config.FREQ_NUM);
-            this._labelsArray = new Uint8Array(_config.TRAIN_BATCH_SIZE);
+        this._createProcessor();
 
-            this._source = this._context.createBufferSource();
-
-            for (var gerne_iter = 0; gerne_iter < 1; gerne_iter++) {
-                for (var music_iter = 0; music_iter < _config.MUSIC_NUM_PER_GERNE; music_iter++) {
-
-                    var request = new XMLHttpRequest();
-
-                    // console.log(`http://localhost:3000/musics/${GERNES[gerne_iter]}/${GERNES[gerne_iter]}_${music_iter}.mp3`);
-                    request.open('GET', 'http://localhost:3000/musics/' + _config.GERNES[gerne_iter] + '/' + _config.GERNES[gerne_iter] + '.' + music_iter + '.mp3', true);
-                    request.responseType = 'arraybuffer';
-
-                    request.onload = function () {
-                        _this._context.decodeAudioData(request.response, function (buffer) {
-                            _this._source.buffer = buffer;
-                        }, null);
-                    };
-                    request.send();
-
-                    this._source.connect(this._context.destination);
-                    this._setProcessor(mode, gerne_iter);
-                    this._source.start(0);
-                }
-            }
-        } else {
-            console.log("mode not valid");
-        }
+        this._createSource().then(function () {
+            _this._connectNodes();
+        }).catch(function (err) {
+            console.log(err);
+        });
     }
 
     (0, _createClass3.default)(audio, [{
-        key: '_setProcessor',
-        value: function _setProcessor(mode, gerne) {
-            var _this2 = this;
+        key: '_createSource',
+        value: function () {
+            var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
+                return _regenerator2.default.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                if (!(this.mode === 'buffer')) {
+                                    _context.next = 4;
+                                    break;
+                                }
 
-            this.analyser = this._context.createAnalyser();
-            this.analyser.fftSize = _config.FREQ_NUM * 2;
+                                this._createBufferSource();
+                                _context.next = 6;
+                                break;
 
-            this.processor = this._context.createScriptProcessor(_config.PROCESS_NUM, 1, 1);
-            this.processor.connect(this._context.destination);
-            this.processor.onaudioprocess = function () {
-                console.log("recording...");
-                var dx = new Uint8Array(_this2.analyser.frequencyBinCount);
-                _this2.analyser.getByteFrequencyData(dx);
+                            case 4:
+                                if (!(this.mode === 'stream')) {
+                                    _context.next = 6;
+                                    break;
+                                }
 
-                _this2._draw(dx);
+                                return _context.abrupt('return', this._createStreamSource());
 
-                _this2._labelsArray[_this2._exampleCnt] = gerne;
-
-                _this2._exampleCnt++;
-                var picsCnt = _this2._exampleCnt / 128;
-
-                if (mode === 'record') {
-                    if (picsCnt == _config.PRED_BATCH_SIZE) {
-                        _this2._exampleCnt = 0;
-                        //this.predict();
-                        console.log("in processor");
-                        model.predict(_this2._dataArray);
-
-                        console.log("out preocessor");
+                            case 6:
+                            case 'end':
+                                return _context.stop();
+                        }
                     }
-                } else if (mode === 'train') {
-                    if (picsCnt == _config.TRAIN_BATCH_SIZE) {
-                        _this2._exampleCnt = 0;
+                }, _callee, this);
+            }));
 
-                        model.train(_this2._dataArray, _this2._labelsArray);
+            function _createSource() {
+                return _ref.apply(this, arguments);
+            }
+
+            return _createSource;
+        }()
+    }, {
+        key: '_createStreamSource',
+        value: function () {
+            var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2() {
+                var _this2 = this;
+
+                var constraints;
+                return _regenerator2.default.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                if (!navigator.mediaDevices.getUserMedia) {
+                                    _context2.next = 6;
+                                    break;
+                                }
+
+                                console.log('getUserMedia supported.');
+                                constraints = { audio: true };
+                                return _context2.abrupt('return', navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+                                    console.log('in');
+                                    _this2._streamSource = _this2._context.createMediaStreamSource(stream);
+                                }).catch(function (err) {
+                                    console.log('The following gUM error occured: ' + err);
+                                }));
+
+                            case 6:
+                                console.log('getUserMedia not supported on your browser!');
+
+                            case 7:
+                            case 'end':
+                                return _context2.stop();
+                        }
+                    }
+                }, _callee2, this);
+            }));
+
+            function _createStreamSource() {
+                return _ref2.apply(this, arguments);
+            }
+
+            return _createStreamSource;
+        }()
+    }, {
+        key: '_createBufferSource',
+        value: function _createBufferSource() {
+            var _this3 = this;
+
+            this._bufferSource = this._context.createBufferSource();
+            this._getNewSong();
+
+            // when the song ended...
+            this._bufferSource.onended = function () {
+                console.log("song ended!!");
+
+                // if there's no more song in  songsArr
+                if (_data.songsArr.length == 0) {
+                    console.log('no songs to add!!');
+                    // terminate the audio
+                    _this3._context.close();
+                } else {
+                    // disconnect the previous source
+                    _this3._bufferSource.disconnect();
+                    // create a new source 
+                    _this3._createBufferSource();
+                    // conect the new source to other audio nodes
+                    _this3._bufferSource.connect(_this3._analyser);
+                    _this3._bufferSource.connect(_this3._context.destination);
+                }
+            };
+            //this._connectNodes();
+        }
+    }, {
+        key: '_createAnalyzer',
+        value: function _createAnalyzer() {
+            this._analyser = this._context.createAnalyser();
+            this._analyser.fftSize = _config.FREQ_NUM * 2;
+        }
+    }, {
+        key: '_createProcessor',
+        value: function _createProcessor() {
+            var _this4 = this;
+
+            this._processor = this._context.createScriptProcessor(_config.PROCESS_NUM, 1, 1);
+            this._processor.onaudioprocess = function () {
+                console.log('in processor');
+                var dx = new Uint8Array(_this4._analyser.frequencyBinCount);
+
+                _this4._analyser.getByteFrequencyData(dx);
+
+                _this4._draw(dx);
+
+                _this4._exampleCnt++;
+                var picsCnt = _this4._exampleCnt / 128;
+
+                if (picsCnt === 1) {
+                    if (_this4.mode === 'stream') {
+                        _this4._exampleCnt = 0;
+                        model.predict(_this4._dataArray);
+                    } else if (_this4.mode === 'buffer') {
+                        _this4._exampleCnt = 0;
+                        _this4.dataset.addExample(_this4._dataArray, _this4._genre);
                     }
                 }
-
-                //await tf.nextFrame();
             };
-
-            this._source.connect(this.analyser);
-            this.analyser.connect(this.processor);
         }
     }, {
         key: '_draw',
@@ -36227,8 +36381,38 @@ var audio = function () {
             }
         }
     }, {
-        key: 'stop',
-        value: function stop() {
+        key: '_connectNodes',
+        value: function _connectNodes() {
+            if (this.mode === 'buffer') {
+                this._bufferSource.connect(this._analyser);
+                this._bufferSource.connect(this._context.destination);
+            } else if (this.mode === 'stream') {
+                console.log(this._analyser);
+                console.log(this._streamSource);
+                this._streamSource.connect(this._analyser);
+            }
+            this._analyser.connect(this._processor);
+            this._processor.connect(this._context.destination); // ??? 
+        }
+    }, {
+        key: '_getNewSong',
+        value: function _getNewSong() {
+            var _this5 = this;
+
+            var song = _data.songsArr.pop();
+
+            // set the on-play song gerne
+            this._genre = song.genre;
+
+            // decode and start playing the song
+            this._context.decodeAudioData(song.buffer, function (decodeData) {
+                _this5._bufferSource.buffer = decodeData;
+                _this5._bufferSource.start(0);
+            });
+        }
+    }, {
+        key: 'close',
+        value: function close() {
             this._context.close();
         }
     }]);
@@ -36236,7 +36420,7 @@ var audio = function () {
 }();
 
 exports.default = audio;
-},{"babel-runtime/helpers/classCallCheck":"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js","babel-runtime/helpers/createClass":"..\\node_modules\\babel-runtime\\helpers\\createClass.js","./model.js":"scripts\\model.js","./config.js":"scripts\\config.js"}],"scripts\\index.js":[function(require,module,exports) {
+},{"babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","babel-runtime/helpers/classCallCheck":"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js","babel-runtime/helpers/createClass":"..\\node_modules\\babel-runtime\\helpers\\createClass.js","./model.js":"scripts\\model.js","./config.js":"scripts\\config.js","./data.js":"scripts\\data.js"}],"scripts\\index.js":[function(require,module,exports) {
 "use strict";
 
 var _tfjs = require("@tensorflow/tfjs");
@@ -36247,36 +36431,52 @@ var _audio = require("./audio.js");
 
 var _audio2 = _interopRequireDefault(_audio);
 
+var _data = require("./data.js");
+
 var _model = require("./model.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-//tf.setBackend("webgl");
+window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
 
-var recordBtn = document.getElementById("Record");
-var trainBtn = document.getElementById("Train");
-var stopBtn = document.getElementById("Stop");
+(0, _model.loadMobileNet)();
+(0, _data.loadSongs)();
 
-var Audio = void 0;
+var myAudio = null;
+var myDataset = new _data.dataset();
 
-recordBtn.onclick = function () {
-    Audio = new _audio2.default('record');
+var RecordBtn = document.getElementById("Record");
+var AddExampleBtn = document.getElementById("AddExample");
+var TrainBtn = document.getElementById("Train");
+var StopBtn = document.getElementById("Stop");
+
+RecordBtn.onclick = function () {
+    if (myAudio === null) {
+        myAudio = new _audio2.default(myDataset, 'stream');
+    }
 };
 
-trainBtn.onclick = function () {
-    Audio = new _audio2.default('train');
+AddExampleBtn.onclick = function () {
+    if (myAudio === null) {
+        myAudio = new _audio2.default(myDataset, 'buffer');
+    }
 };
 
-stopBtn.onclick = function () {
-    Audio.stop();
+TrainBtn.onclick = function () {
+    (0, _model.train)(myDataset);
 };
 
-(0, _model.loadmodel)();
+StopBtn.onclick = function () {
+    if (myAudio !== null) {
+        myAudio.close();
+        myAudio = null;
+    }
+};
 
-console.log("backend: ", tf.getBackend());
-},{"@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./audio.js":"scripts\\audio.js","./model.js":"scripts\\model.js"}],"..\\..\\..\\AppData\\Roaming\\npm\\node_modules\\parcel-bundler\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
+// console.log("backend: ", tf.getBackend());
+},{"@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./audio.js":"scripts\\audio.js","./data.js":"scripts\\data.js","./model.js":"scripts\\model.js"}],"..\\..\\..\\AppData\\Roaming\\npm\\node_modules\\parcel-bundler\\src\\builtins\\hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -36305,7 +36505,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '59314' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '62703' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
