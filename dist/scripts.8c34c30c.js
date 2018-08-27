@@ -35813,9 +35813,9 @@ exports.default = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var GENRES = ['jazz', 'classical', 'reggae', 'hiphop'];
+var GENRES = ['jazz', 'reggae', 'classical', 'hiphop'];
 var GENRES_NUM = 4;
-var MUSIC_NUM_PER_GENRE = 5;
+var MUSIC_NUM_PER_GENRE = 8;
 
 var FREQ_NUM = 128;
 var PROCESS_NUM = 1024;
@@ -35918,8 +35918,8 @@ var train = exports.train = function () {
                     case 0:
 
                         model.fit(dataset.xs, dataset.ys, {
-                            batchSize: 2,
-                            epochs: 3,
+                            batchSize: 5,
+                            epochs: 20,
                             callbacks: {
                                 onBatchEnd: function () {
                                     var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(batch, logs) {
@@ -35987,7 +35987,7 @@ model = tf.sequential({
     tf.layers.flatten({ inputShape: [4, 4, 1024] }),
     // Layer 1
     tf.layers.dense({
-        units: 256,
+        units: 256, // 1024 is too large for tf.js 
         activation: 'relu',
         kernelInitializer: 'varianceScaling',
         useBias: true
@@ -36002,7 +36002,7 @@ model = tf.sequential({
     })]
 });
 
-var optimizer = tf.train.sgd(0.1);
+var optimizer = tf.train.rmsprop(0.00001); // 0.1 is too big, loss will oscillate in result 
 model.compile({ optimizer: optimizer, loss: 'categoricalCrossentropy' });
 
 function getActivation(dataArray) {
@@ -36010,134 +36010,14 @@ function getActivation(dataArray) {
 
     var activation = tf.tidy(function () {
         var data = tf.tensor3d(dataArray, [1, 128, 128]); // arr --> tensor
-        var rgbData = tf.stack([data, data, data], 3); // --> 3 rgb channel
+        var rgbData = tf.stack([data, data, data], 3); // --> 3 rgb channel [1, 128,]
         var activation = truncModel.predict(rgbData);
         return activation;
     });
 
     return activation;
 }
-},{"babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./config.js":"scripts\\config.js"}],"scripts\\data.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.dataset = exports.loadSongs = exports.songsArr = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _regenerator = require('babel-runtime/regenerator');
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-var loadSongs = exports.loadSongs = function () {
-  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-    var _loop, genre;
-
-    return _regenerator2.default.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _loop = function _loop(genre) {
-              for (var idx = 0; idx < _config.MUSIC_NUM_PER_GENRE; idx++) {
-
-                var GENRE = _config.GENRES[genre];
-                console.log(GENRE);
-                var IDX = ('0000' + idx).slice(-5);
-                var URL = 'http://localhost:3000/musics/' + GENRE + '/' + GENRE + '.' + IDX + '.wav';
-
-                fetch(URL).then(function (res) {
-                  return res.arrayBuffer();
-                }).then(function (buffer) {
-                  console.log(genre);
-                  var song = { genre: genre, buffer: buffer };
-                  songsArr.push(song);
-                });
-              }
-            };
-
-            for (genre = 0; genre < _config.GENRES_NUM; genre++) {
-              _loop(genre);
-            }
-
-          case 2:
-          case 'end':
-            return _context.stop();
-        }
-      }
-    }, _callee, this);
-  }));
-
-  return function loadSongs() {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-var _tfjs = require('@tensorflow/tfjs');
-
-var tf = _interopRequireWildcard(_tfjs);
-
-var _config = require('./config.js');
-
-var _model = require('./model.js');
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var songsArr = exports.songsArr = [];
-
-var dataset = exports.dataset = function () {
-  function dataset() {
-    (0, _classCallCheck3.default)(this, dataset);
-
-    this.numClasses = _config.GENRES_NUM;
-  }
-
-  (0, _createClass3.default)(dataset, [{
-    key: 'addExample',
-    value: function addExample(dataArray, label) {
-      var _this = this;
-
-      console.log(dataArray, label);
-
-      var x = (0, _model.getActivation)(dataArray);
-      var y = tf.tidy(function () {
-        return tf.oneHot(tf.tensor1d([label]).toInt(), _this.numClasses);
-      });
-
-      if (this.xs == null) {
-        this.xs = tf.keep(x);
-        this.ys = tf.keep(y);
-      } else {
-        var oldX = this.xs;
-        this.xs = tf.keep(oldX.concat(x, 0));
-
-        var oldY = this.ys;
-        this.ys = tf.keep(oldY.concat(y, 0));
-
-        oldX.dispose();
-        oldY.dispose();
-        y.dispose();
-      }
-      console.log(this.xs);
-      console.log(this.ys);
-    }
-  }]);
-  return dataset;
-}();
-},{"babel-runtime/helpers/classCallCheck":"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js","babel-runtime/helpers/createClass":"..\\node_modules\\babel-runtime\\helpers\\createClass.js","babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./config.js":"scripts\\config.js","./model.js":"scripts\\model.js"}],"scripts\\audio.js":[function(require,module,exports) {
+},{"babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./config.js":"scripts\\config.js"}],"scripts\\audio.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36166,8 +36046,6 @@ var model = _interopRequireWildcard(_model);
 
 var _config = require('./config.js');
 
-var _data = require('./data.js');
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -36179,11 +36057,11 @@ var audio = function () {
         (0, _classCallCheck3.default)(this, audio);
 
 
-        this.dataset = dataset;
+        this._dataset = dataset;
         this.mode = mode;
 
         // data buffer array to store sound image, 
-        // converted to tensor later.
+        // converted to tensor later. 
         this._dataArray = new Uint8Array(_config.FREQ_NUM * _config.FREQ_NUM);
 
         // declare web audio nodes
@@ -36228,7 +36106,7 @@ var audio = function () {
                     while (1) {
                         switch (_context.prev = _context.next) {
                             case 0:
-                                if (!(this.mode === 'buffer')) {
+                                if (!(this.mode === 'addExample' || this.mode === 'file')) {
                                     _context.next = 4;
                                     break;
                                 }
@@ -36313,8 +36191,10 @@ var audio = function () {
             this._bufferSource.onended = function () {
                 console.log("song ended!!");
 
+                var bufferArr = _this3.mode === 'file' ? _this3._dataset.filesArr : _this3._dataset.songsArr;
+
                 // if there's no more song in  songsArr
-                if (_data.songsArr.length == 0) {
+                if (bufferArr.length == 0) {
                     console.log('no songs to add!!');
                     // terminate the audio
                     _this3._context.close();
@@ -36354,12 +36234,12 @@ var audio = function () {
                 var picsCnt = _this4._exampleCnt / 128;
 
                 if (picsCnt === 1) {
-                    if (_this4.mode === 'stream') {
+                    if (_this4.mode === 'stream' || _this4.mode === 'file') {
                         _this4._exampleCnt = 0;
                         model.predict(_this4._dataArray);
-                    } else if (_this4.mode === 'buffer') {
+                    } else if (_this4.mode === 'addExample') {
                         _this4._exampleCnt = 0;
-                        _this4.dataset.addExample(_this4._dataArray, _this4._genre);
+                        _this4._dataset.addExample(_this4._dataArray, _this4._genre);
                     }
                 }
             };
@@ -36383,7 +36263,7 @@ var audio = function () {
     }, {
         key: '_connectNodes',
         value: function _connectNodes() {
-            if (this.mode === 'buffer') {
+            if (this.mode === 'addExample' || this.mode === 'file') {
                 this._bufferSource.connect(this._analyser);
                 this._bufferSource.connect(this._context.destination);
             } else if (this.mode === 'stream') {
@@ -36399,10 +36279,14 @@ var audio = function () {
         value: function _getNewSong() {
             var _this5 = this;
 
-            var song = _data.songsArr.pop();
-
+            var song = void 0;
             // set the on-play song gerne
-            this._genre = song.genre;
+            if (this.mode === 'addExample') {
+                song = this._dataset.songsArr.pop();
+                this._genre = song.genre;
+            } else if (this.mode === 'file') {
+                song = this._dataset.filesArr.pop();
+            }
 
             // decode and start playing the song
             this._context.decodeAudioData(song.buffer, function (decodeData) {
@@ -36420,7 +36304,167 @@ var audio = function () {
 }();
 
 exports.default = audio;
-},{"babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","babel-runtime/helpers/classCallCheck":"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js","babel-runtime/helpers/createClass":"..\\node_modules\\babel-runtime\\helpers\\createClass.js","./model.js":"scripts\\model.js","./config.js":"scripts\\config.js","./data.js":"scripts\\data.js"}],"scripts\\index.js":[function(require,module,exports) {
+},{"babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","babel-runtime/helpers/classCallCheck":"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js","babel-runtime/helpers/createClass":"..\\node_modules\\babel-runtime\\helpers\\createClass.js","./model.js":"scripts\\model.js","./config.js":"scripts\\config.js"}],"scripts\\data.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _tfjs = require('@tensorflow/tfjs');
+
+var tf = _interopRequireWildcard(_tfjs);
+
+var _config = require('./config.js');
+
+var _audio = require('./audio.js');
+
+var _audio2 = _interopRequireDefault(_audio);
+
+var _model = require('./model.js');
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var dataset = function () {
+  function dataset() {
+    (0, _classCallCheck3.default)(this, dataset);
+
+    this.numClasses = _config.GENRES_NUM;
+
+    // training data (tensor) 
+    this.xs = null;
+    this.ys = null;
+
+    // songs data from backend
+    this.songsArr = [];
+
+    // user's uploading songs
+    this.filesArr = [];
+  }
+
+  (0, _createClass3.default)(dataset, [{
+    key: 'loadSongs',
+    value: function () {
+      var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
+        var _this = this;
+
+        var _loop, genre;
+
+        return _regenerator2.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _loop = function _loop(genre) {
+                  for (var idx = 0; idx < _config.MUSIC_NUM_PER_GENRE; idx++) {
+
+                    var GENRE = _config.GENRES[genre];
+                    console.log(GENRE);
+                    var IDX = ('0000' + idx).slice(-5);
+                    var URL = 'http://localhost:3000/musics/' + GENRE + '/' + GENRE + '.' + IDX + '.wav';
+
+                    fetch(URL).then(function (res) {
+                      return res.arrayBuffer();
+                    }).then(function (buffer) {
+                      console.log(genre);
+                      var song = { genre: genre, buffer: buffer };
+                      _this.songsArr.push(song);
+                    });
+                  }
+                };
+
+                for (genre = 0; genre < _config.GENRES_NUM; genre++) {
+                  _loop(genre);
+                }
+
+              case 2:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function loadSongs() {
+        return _ref.apply(this, arguments);
+      }
+
+      return loadSongs;
+    }()
+  }, {
+    key: 'loadFiles',
+    value: function loadFiles(files) {
+      var _this2 = this;
+
+      console.log("inputs changed");
+      console.log(files);
+      var file = files[0];
+      console.log(file);
+      var fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = function (e) {
+        var buffer = e.target.result;
+        _this2.filesArr.push({ buffer: buffer });
+        var myAudio = new _audio2.default(_this2, 'file');
+      };
+    }
+  }, {
+    key: 'addExample',
+    value: function addExample(dataArray, label) {
+      var _this3 = this;
+
+      console.log(dataArray, label);
+
+      var x = tf.tidy(function () {
+        return (0, _model.getActivation)(dataArray);
+      });
+      var y = tf.tidy(function () {
+        return tf.oneHot(tf.tensor1d([label]).toInt(), _this3.numClasses);
+      });
+
+      if (this.xs == null) {
+        this.xs = tf.keep(x);
+        this.ys = tf.keep(y);
+      } else {
+        var oldX = this.xs;
+        this.xs = tf.keep(oldX.concat(x, 0));
+
+        var oldY = this.ys;
+        this.ys = tf.keep(oldY.concat(y, 0));
+
+        oldX.dispose();
+        oldY.dispose();
+
+        x.dispose();
+        y.dispose();
+      }
+
+      console.log(this.xs);
+      console.log(this.ys);
+    }
+  }]);
+  return dataset;
+}();
+
+exports.default = dataset;
+},{"babel-runtime/regenerator":"..\\node_modules\\babel-runtime\\regenerator\\index.js","babel-runtime/helpers/asyncToGenerator":"..\\node_modules\\babel-runtime\\helpers\\asyncToGenerator.js","babel-runtime/helpers/classCallCheck":"..\\node_modules\\babel-runtime\\helpers\\classCallCheck.js","babel-runtime/helpers/createClass":"..\\node_modules\\babel-runtime\\helpers\\createClass.js","@tensorflow/tfjs":"..\\node_modules\\@tensorflow\\tfjs\\dist\\tf.esm.js","./config.js":"scripts\\config.js","./audio.js":"scripts\\audio.js","./model.js":"scripts\\model.js"}],"scripts\\index.js":[function(require,module,exports) {
 "use strict";
 
 var _tfjs = require("@tensorflow/tfjs");
@@ -36433,24 +36477,36 @@ var _audio2 = _interopRequireDefault(_audio);
 
 var _data = require("./data.js");
 
+var _data2 = _interopRequireDefault(_data);
+
 var _model = require("./model.js");
+
+var model = _interopRequireWildcard(_model);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+// load loadMobilenet(), train()
 
-(0, _model.loadMobileNet)();
-(0, _data.loadSongs)();
 
-var myAudio = null;
-var myDataset = new _data.dataset();
+// load audio class
+var RecordBtn = document.getElementById("Record"); // load dataset class
 
-var RecordBtn = document.getElementById("Record");
 var AddExampleBtn = document.getElementById("AddExample");
 var TrainBtn = document.getElementById("Train");
 var StopBtn = document.getElementById("Stop");
+
+var fileInputs = document.getElementById("fileInputs");
+
+var myAudio = null; // only exist one audio obj, set to null when audio is not registered
+var myDataset = new _data2.default(); // 
+
+window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+
+model.loadMobileNet(); // load the truncated mobilenet
+myDataset.loadSongs(); // fetch songs from backend and add them to datast.songsArr[]
+
 
 RecordBtn.onclick = function () {
     if (myAudio === null) {
@@ -36460,12 +36516,12 @@ RecordBtn.onclick = function () {
 
 AddExampleBtn.onclick = function () {
     if (myAudio === null) {
-        myAudio = new _audio2.default(myDataset, 'buffer');
+        myAudio = new _audio2.default(myDataset, 'addExample');
     }
 };
 
 TrainBtn.onclick = function () {
-    (0, _model.train)(myDataset);
+    model.train(myDataset);
 };
 
 StopBtn.onclick = function () {
@@ -36473,6 +36529,12 @@ StopBtn.onclick = function () {
         myAudio.close();
         myAudio = null;
     }
+};
+
+// on detecting user's uplaoding files,
+// play and predict the uploaded file.
+fileInputs.onchange = function () {
+    return myDataset.loadFiles(fileInputs.files);
 };
 
 // console.log("backend: ", tf.getBackend());
@@ -36505,7 +36567,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '62703' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '61017' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

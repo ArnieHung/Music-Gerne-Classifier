@@ -2,6 +2,7 @@
   "presets": [
     [
       "env",
+      "react",
       {
         "esmodules": false,
         "targets": {
@@ -15,7 +16,7 @@
         }
       }
     ]
-  ],
+  ], 
   "plugins": [
     "transform-runtime"
   ]

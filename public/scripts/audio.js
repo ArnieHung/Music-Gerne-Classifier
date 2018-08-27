@@ -6,18 +6,17 @@ import {
     PRED_BATCH_SIZE, TRAIN_BATCH_SIZE,
 } from './config.js';
 
-import {songsArr} from './data.js';
 
 
 
 export default class audio {
     constructor(dataset, mode) {
         
-        this.dataset = dataset;
+        this._dataset = dataset;
         this.mode = mode;
 
         // data buffer array to store sound image, 
-        // converted to tensor later.
+        // converted to tensor later. 
         this._dataArray = new Uint8Array(FREQ_NUM * FREQ_NUM);
     
         // declare web audio nodes
@@ -55,7 +54,7 @@ export default class audio {
     }
 
     async _createSource() {
-        if(this.mode === 'buffer') {
+        if(this.mode === 'addExample' || this.mode === 'file') {
             this._createBufferSource();
         }
         else if (this.mode === 'stream') {
@@ -92,8 +91,12 @@ export default class audio {
         this._bufferSource.onended = () => {
             console.log("song ended!!");  
 
+
+            const bufferArr = (this.mode === 'file')? 
+            this._dataset.filesArr : this._dataset.songsArr;
+
             // if there's no more song in  songsArr
-            if(songsArr.length == 0) {
+            if(bufferArr.length == 0) {
                 console.log('no songs to add!!');
                 // terminate the audio
                 this._context.close();
@@ -119,7 +122,7 @@ export default class audio {
     }
 
 
-
+    
     _createProcessor() {
         this._processor = this._context.createScriptProcessor(PROCESS_NUM, 1, 1);
         this._processor.onaudioprocess =  () => {
@@ -134,14 +137,14 @@ export default class audio {
             const picsCnt = this._exampleCnt / 128; 
 
             if(picsCnt === 1) {
-                if (this.mode === 'stream') {
+                if (this.mode === 'stream' || this.mode === 'file') {
                     this._exampleCnt = 0;
                     model.predict(this._dataArray);
                 }
     
-                else if (this.mode === 'buffer') {
+                else if (this.mode === 'addExample') {
                     this._exampleCnt = 0;
-                    this.dataset.addExample(this._dataArray, this._genre);           
+                    this._dataset.addExample(this._dataArray, this._genre);           
                 }
             }
 
@@ -168,7 +171,7 @@ export default class audio {
 
 
     _connectNodes() {
-        if(this.mode === 'buffer') {       
+        if(this.mode === 'addExample' || this.mode === 'file') {       
             this._bufferSource.connect(this._analyser);
             this._bufferSource.connect(this._context.destination); 
         }
@@ -183,10 +186,16 @@ export default class audio {
 
 
     _getNewSong() {
-        const song =songsArr.pop();
-
+        
+        let song;
         // set the on-play song gerne
-        this._genre = song.genre;
+        if(this.mode === 'addExample') {
+            song = this._dataset.songsArr.pop();
+            this._genre = song.genre;
+        }
+        else if(this.mode === 'file') {
+            song = this._dataset.filesArr.pop();
+        }
 
         // decode and start playing the song
         this._context.decodeAudioData(song.buffer, (decodeData) => {

@@ -20,7 +20,7 @@ model = tf.sequential({
       tf.layers.flatten({inputShape: [4, 4, 1024]}),
       // Layer 1
       tf.layers.dense({
-        units: 256,
+        units: 256,           // 1024 is too large for tf.js 
         activation: 'relu',
         kernelInitializer: 'varianceScaling',
         useBias: true
@@ -36,7 +36,7 @@ model = tf.sequential({
     ]
 });
 
-const optimizer = tf.train.sgd(0.1);
+const optimizer = tf.train.rmsprop(0.00001); // 0.1 is too big, loss will oscillate in result 
 model.compile({optimizer: optimizer, loss: 'categoricalCrossentropy'});
 
 
@@ -52,7 +52,7 @@ export function getActivation (dataArray) { // will activation be dispose??
 
     const activation = tf.tidy(() => {
         const data = tf.tensor3d(dataArray, [1, 128, 128]); // arr --> tensor
-        const rgbData = tf.stack([data, data, data], 3);    // --> 3 rgb channel
+        const rgbData = tf.stack([data, data, data], 3);    // --> 3 rgb channel [1, 128,]
         const activation =  truncModel.predict(rgbData);
         return activation;
     });
@@ -83,8 +83,8 @@ export async function predict(dataArray) {
 export async function train(dataset) {
  
     model.fit(dataset.xs, dataset.ys, {
-            batchSize: 2, 
-            epochs: 3,
+            batchSize: 5, 
+            epochs: 20,
             callbacks: {
                 onBatchEnd: async (batch, logs) => {
                   console.log('Loss: ' + logs.loss.toFixed(5));
