@@ -7,13 +7,13 @@ import {
 } from './config.js';
 
 
-import audio from './audio.js'
+import * as myAudio from './audio.js'
 
 import {getActivation} from './model.js'
 
 
 
-export default class dataset {
+class dataset {
 
   constructor() {
     this.numClasses = GENRES_NUM;
@@ -27,6 +27,9 @@ export default class dataset {
 
     // user's uploading songs
     this.filesArr = [];
+
+    //
+    this.history = null;
   }
 
 
@@ -58,13 +61,16 @@ export default class dataset {
     console.log(files);
     const file = files[0];
     console.log(file);
-    const fileReader = new FileReader();
-    fileReader.readAsArrayBuffer(file);
-    fileReader.onload = (e) => {
-        const buffer = e.target.result;
-        this.filesArr.push({buffer});
-        let myAudio = new audio(this, 'file'); 
-    }
+
+    return new Promise ((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+      fileReader.onload = (e) => {
+          const buffer = e.target.result;
+          this.filesArr.push({buffer});
+          resolve();
+      }
+    });
   }
   
 
@@ -97,4 +103,34 @@ export default class dataset {
     console.log(this.xs);
     console.log(this.ys);
   }
+
+  addHistory(pred) {
+    if (this.history === null) {
+      this.history = tf.keep(pred);
+    }
+    else {
+      const oldHistory = this.history;
+      this.history = tf.keep(tf.add(oldHistory, pred));
+      oldHistory.dispose();
+    }
+  }
+
+  getResult() {
+    const predictedClass = this.history.as1D().argMax();
+    const classId = (predictedClass.dataSync())[0];
+    predictedClass.dispose();
+
+    const confidence = tf.tidy(() => {
+      const sum = this.history.sum();
+      const max = this.history.max();
+      return (tf.div(max, sum).dataSync())[0];
+    });
+    
+    this.history.dispose();
+    this.history = null;
+
+    return {confidence, classId};
+  }
 }
+
+export let myDataset = new dataset();

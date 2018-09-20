@@ -5,6 +5,8 @@ import {
     PRED_BATCH_SIZE, TRAIN_BATCH_SIZE,
 } from './config.js';
 
+import {myDataset} from './data'
+
 
 const MODEL_URL = 'http://localhost:3000/truncated_model/tensorflowjs_model.pb'; 
 const WEIGHTS_URL = 'http://localhost:3000/truncated_model/weights_manifest.json'; 
@@ -67,26 +69,34 @@ export async function predict(dataArray) {
     const predictedClass = tf.tidy(() => {
         const activation =  getActivation(dataArray);
         const predictions = model.predict(activation);
+        myDataset.addHistory(predictions);
         return predictions.as1D().argMax();
       });
   
       const classId = (await predictedClass.data())[0];
       predictedClass.dispose();
       console.log(classId);
-
-      await tf.nextFrame();
+      return classId;
+   
     
 } 
 
 
 
-export async function train(dataset) {
+export async function train(dataset, setLines) {
  
     model.fit(dataset.xs, dataset.ys, {
+            validationSplit: 0.1, 
             batchSize: 5, 
-            epochs: 20,
+            epochs: 10,
             callbacks: {
+                onEpochEnd: async (epoch, logs) => {
+                    console.log(logs, epoch);
+                    setLines(logs.loss, logs.val_loss, epoch);
+                    await tf.nextFrame();
+                },
                 onBatchEnd: async (batch, logs) => {
+                    console.log(logs);
                   console.log('Loss: ' + logs.loss.toFixed(5));
                   await tf.nextFrame();
                 }

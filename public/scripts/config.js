@@ -1,6 +1,6 @@
 const GENRES = ['jazz',  'reggae', 'classical', 'hiphop'];
 const GENRES_NUM = 4;
-const MUSIC_NUM_PER_GENRE = 8;
+const MUSIC_NUM_PER_GENRE = 9;
 
 const FREQ_NUM = 128;
 const PROCESS_NUM = 1024; 

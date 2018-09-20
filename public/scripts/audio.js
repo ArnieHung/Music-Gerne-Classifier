@@ -5,11 +5,17 @@ import {
     FREQ_NUM, PROCESS_NUM,
     PRED_BATCH_SIZE, TRAIN_BATCH_SIZE,
 } from './config.js';
+import { myDataset } from './data.js';
+
+let myAudio = null;
+let setOnplayPred = null;
+let setEnded = null;
+let setPaused = null;
+
+console.log('hello');
 
 
-
-
-export default class audio {
+class audio {
     constructor(dataset, mode) {
         
         this._dataset = dataset;
@@ -99,13 +105,17 @@ export default class audio {
             if(bufferArr.length == 0) {
                 console.log('no songs to add!!');
                 // terminate the audio
-                this._context.close();
+                //this._context.close();
+                close();
+
+                setEnded();
             }
             else {
+                this._exampleCnt = 0;
                 // disconnect the previous source
                 this._bufferSource.disconnect();
                 // create a new source 
-                this._createBufferSource();
+                this._createBufferSource(); 
                 // conect the new source to other audio nodes
                 this._bufferSource.connect(this._analyser);
                 this._bufferSource.connect(this._context.destination);
@@ -139,7 +149,11 @@ export default class audio {
             if(picsCnt === 1) {
                 if (this.mode === 'stream' || this.mode === 'file') {
                     this._exampleCnt = 0;
-                    model.predict(this._dataArray);
+                    model.predict(this._dataArray)
+                    .then((pred) => {
+                        setOnplayPred(pred);
+                    });
+                    
                 }
     
                 else if (this.mode === 'addExample') {
@@ -153,17 +167,17 @@ export default class audio {
 
 
     _draw(dx) {
-        this._ctxTmp.drawImage(this._canvas, 0, 0, 300, 200, 0, 0, 300, 200);
+        this._ctxTmp.drawImage(this._canvas, 0, 0, 300, 150, 0, 0, 300, 150);
 
         this._ctx.setTransform(1, 0, 0, 1, -1, 0);
-        this._ctx.drawImage(this._canvasTmp, 0, 0, 300, 200, 0, 0, 300, 200);
+        this._ctx.drawImage(this._canvasTmp, 0, 0, 300, 150, 0, 0, 300, 150);
 
         for (let i = 0; i < FREQ_NUM; i++) {
             var value = dx[i];
             this._dataArray[this._exampleCnt * FREQ_NUM + i] = value;
 
             this._ctx.fillStyle = `rgb( ${value}, ${value}, ${value})`;
-            this._ctx.fillRect(300 - 1, 200 - i, 1, 1);
+            this._ctx.fillRect(300 - 1, 150 - i, 1, 1);
         }
 
     }
@@ -195,6 +209,7 @@ export default class audio {
         }
         else if(this.mode === 'file') {
             song = this._dataset.filesArr.pop();
+            
         }
 
         // decode and start playing the song
@@ -207,4 +222,72 @@ export default class audio {
     close() {
         this._context.close();
     }
+
+    pause() {
+        this._context.suspend().then(()=>{
+            setPaused();
+        });
+    }
+
+    resume() {
+        this._context.resume();
+    }
 }
+
+
+
+
+
+export function addExample(_setEnded) {
+    if(myAudio === null){
+        console.log("hi");
+        setEnded = _setEnded;
+        myAudio = new audio(myDataset, 'addExample');    
+    }  else {
+        console.log("audio been set!");
+    }
+}
+
+
+export function pause(_setPaused) {
+    if(myAudio !== null) {
+        setPaused = _setPaused;
+        myAudio.pause();
+    }
+}
+
+export function resume() {
+    if(myAudio !== null) {
+        myAudio.resume();
+    }
+}
+
+
+export function record(_setOnplayPred) {
+    if(myAudio === null) {
+        myAudio = new audio(myDataset, 'stream');
+        setOnplayPred = _setOnplayPred;
+    } else {
+        console.log("audio been set!");
+    }
+}
+
+export function file(files, _setOnplayPred, _setEnded) {
+    if(myAudio === null) {
+        setOnplayPred = _setOnplayPred;
+        setEnded = _setEnded;
+        myDataset.loadFiles(files)
+        .then(() => {myAudio = new audio(myDataset, 'file');});
+    } else {
+        console.log("audio been set!");
+    }
+}
+
+
+export function close() {
+    if(myAudio !== null) {
+        myAudio.close();
+        myAudio = null;
+    }
+}
+

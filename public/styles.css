@@ -70,4 +70,22 @@ body, html {
     min-height: 100vh; /* These two lines are counted as one 🙂       */
     display: flex;
     align-items: center;
+    
   }
+
+
+
+h4 {
+    letter-spacing: 7px;
+    color: #fff!important;
+}
+
+
+canvas {
+    padding: 0;
+    margin:5px 0px  20px;
+    
+    
+    
+}
+
